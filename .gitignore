@@ -112,3 +112,5 @@ typings/
 
 .DS_Store
 
+.vscode/
+
