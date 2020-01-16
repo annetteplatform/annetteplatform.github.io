@@ -3,7 +3,7 @@ home: true
 heroImage: /annette-logo2.svg
 actionText: Get Started →
 actionLink: /get-started/
-footer: Apache 2 Licensed | Copyright © 2018-present Valery Lobachev
+footer: Apache 2 Licensed | Copyright © 2013-present Valery Lobachev
 ---
 
 <div class="features">
