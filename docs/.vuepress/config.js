@@ -4,7 +4,7 @@ module.exports = ctx => ({
     "/": {
       lang: "en-US",
       title: "Annette Platform",
-      description: "Platform to create business application"
+      description: "Platform to create business applications"
     },
     "/ru/": {
       lang: "ru-RU",

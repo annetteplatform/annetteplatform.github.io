@@ -2,30 +2,75 @@
 
 # Introduction
 
-## Annette Platform
+Annette Platform is a platform to build business applications. It is designed to be highly available. 
+Annette Platform is “cloud-native” as it has been designed scale out in large, distributed environments,
+and works well inside containers. It uses in-memory calculation and non-blocking processing 
+technologies to provide high performance. Annette Platform has been build on microservice architecture. 
+Each microservice runs multiple instances that form a cluster to provide load balancing and scaling.
 
-Annette is a platform to build high performance, scalable, cloud-ready business application. It is based on microservice architecture. Each component of the platform represents one or more microservices. Microservices are loosely coupled. Each microservice do one thing and do it well.  Microservices are orchestrated by API Gateway. API Gateway are responsible for processing requests comings from frontend applications or external systems. During processing request API Gateway performs:
- * authentication and authorization tasks,
- * calls one or more microservices,
- * aggregates data received from microservices,
- * forms response to the request. 
+Annette Platform Community Edition (Annette CE) is open source version of Annette Platform Enterprise Edition 
+(Annette EE). Annette CE contains the base functionality and key features of Annette EE. Since it has no 
+backward compatibility restrictions, some of the Annette Platform features could be implemented in a more 
+advanced way. 
 
-To provide scalability and high performance API Gateway could be started in multiple instances distributed on nodes across network. Due to stateless nature of API Gateway any request could be processed by any instance.
+Annette Platform is backed by [IP Lobachev](https://lobachev.biz/), [AmberLabs](https://amberlabs.ru/) and
+[ArtNet](https://artnet.tech/), software companies that develop business applications using the platform 
+and provide commercial support.
 
-Microservices could work in clustered mode. In clustered mode microservice runs multiple instances distributed on one or more nodes across network. Each instance of microservice discovers other instances in the network and forms cluster using gossip protocol. After this microservice gets in ready state and can serve client requests. In cluster mode load is balanced between instances. If new instances started or existing instance goes down the cluster automatically rebalanced without interruption.  
+## Features
+
+Annette platform provides set of microservices and libraries that helps to build enterprise wide digital ecosystem.
+This ecosystem can contain a number of applications that share commonly used data and have seamless integration. 
+This helps Annette users to communicate, collaborate and make them more productive. 
+
+Business key features:
+
+* High performance that provides quick response and high user satisfaction (customer, employees, business partners)
+* High scalability that allows you to optimize costs and scale computing resources in accordance with the needs
+* Low time-to-market due to rapid development and implementation of new services
+* Low total cost of ownership
+* A unified ecosystem that combines various applications on the Annette platform into a single business environment 
+  through Single Sign On and shared data.
+* Powerful authorization system implements a fine-grained role based access control (RBAC) and allows flexible permission
+  assignment expressed with business terms such as organizational hierarchy and employee business roles.
+* A unified person repository that stores all users, employees, partners, contacts etc. in single repository and share 
+  it between Annette applications
+* An organizational repository that stores organizations data with their respective organizational structures, hierarchies, 
+  units, positions, business roles and manager-subordinate relationships     
+* Multilanguage and localization support allows to use Annette platform in multinational corporations.  
+* Flexible attribute system that allows creating custom attributes, assigning them to various business entities such as person, 
+  organization unit, organizational position etc. and provides powerful full text search capabilities.  
 
 
-## Annette Axon
+Technical key features:
 
-> An **axon** or nerve fiber, is a long, slender projection of a nerve cell, or neuron, in vertebrates, that typically conducts electrical impulses known as action potentials, away from the nerve cell body. The function of the axon is to transmit information to different neurons, muscles, and glands.
->
-> [*Wikipedia*](https://en.wikipedia.org/wiki/Axon)
+* High performance provided by implementation of [Reactive Manifesto](https://www.reactivemanifesto.org/) principles.
+* High scalability provided by [Akka](https://akka.io/) clustering technologies and [Kubernetes](https://kubernetes.io/) 
+  production-grade container orchestration.  
+* Cloud native allows deploying Annette applications in on-premise, private cloud or public cloud environments. 
+* Enterprise-wide platform
+* Extendable architecture based on microservices
+* Support of unlimited number frontend applications
+* Support of unlimited number API Gateways for serving frontend applications and external integration services
+* Distributed cluster architecture of microservices and API Gateways
+* External & internal authentication
+* External & internal authorization
+* Embedded Elastic Search integration
+  
 
-Annette Axon is the business process management system integrated with project management system. It is built on Annette platform and provide all its capabilities such as high availability, performance and scalability.
-Annette Axon helps companies to define, execute and control non-project and project business processes. 
-It implements the following functionality:
+## Enterprise-wide platform
 
-* flexible business processes based on BPM engine (Camunda BPM)
-* organizational structure of one or more companies and project team structures
-* project system with Gantt diagram representation of WBS (work breakdown structure)
+Annette platform is enterprise-wide platform. It can be used to build any number applications based on set API Gateways and microservices.
+
+![Annette Layers](ewp.png "Annette Layers")
+
+Annette platform contains the next layers:
+* Frontend Layer contains frontend applications. For example, there could be Blogs & Business Communication application to provide staff with information related their duty, Finance application to manage financial tasks, Logistic application to perform logistics operation etc. Frontend Layer communicates to API Gateway Layer.
+* API Gateway Layer responsible for processing requests comings from frontend applications or external systems. API gateways perform authentication and authorization and orchestrate microservices.
+* Microservice Layer contains set of microservices that provides core functionality of applications  build on Annette Platform. Each microservice has single responsibility and can communicate to:
+  * others microservices (synchronous by calling microservice API or asynchronous by using Apache Kafka)
+  * Persistence Layer to store data and files
+  * Integration Layer to exchange data with external information systems
+* Persistence Layer stores data  in SQL/NoSQL DBs and store files in object storage
+* Integration Layer performs communication with external information systems (SAP ERP, S/4HANA, MES, IoT Gateways, etc.)
 
