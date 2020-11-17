@@ -3,7 +3,7 @@
 # abort on errors
 set -e
 # build
-vuepress build docs
+yarn docs:build
 
 # navigate into the build output directory
 cd docs/.vuepress/dist

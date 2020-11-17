@@ -17,7 +17,7 @@ Annette Platform is backed by [IP Lobachev](https://lobachev.biz/), [AmberLabs](
 [ArtNet](https://artnet.tech/), software companies that develop business applications using the platform 
 and provide commercial support.
 
-## Features
+## Key Features
 
 Annette platform provides set of microservices and libraries that helps to build enterprise wide digital ecosystem.
 This ecosystem can contain a number of applications that share commonly used data and have seamless integration. 
@@ -56,21 +56,23 @@ Technical key features:
 * External & internal authentication
 * External & internal authorization
 * Embedded Elastic Search integration
-  
 
-## Enterprise-wide platform
 
-Annette platform is enterprise-wide platform. It can be used to build any number applications based on set API Gateways and microservices.
+## Usage in production
 
-![Annette Layers](ewp.png "Annette Layers")
-
-Annette platform contains the next layers:
-* Frontend Layer contains frontend applications. For example, there could be Blogs & Business Communication application to provide staff with information related their duty, Finance application to manage financial tasks, Logistic application to perform logistics operation etc. Frontend Layer communicates to API Gateway Layer.
-* API Gateway Layer responsible for processing requests comings from frontend applications or external systems. API gateways perform authentication and authorization and orchestrate microservices.
-* Microservice Layer contains set of microservices that provides core functionality of applications  build on Annette Platform. Each microservice has single responsibility and can communicate to:
-  * others microservices (synchronous by calling microservice API or asynchronous by using Apache Kafka)
-  * Persistence Layer to store data and files
-  * Integration Layer to exchange data with external information systems
-* Persistence Layer stores data  in SQL/NoSQL DBs and store files in object storage
-* Integration Layer performs communication with external information systems (SAP ERP, S/4HANA, MES, IoT Gateways, etc.)
+Annette is stable and mature platform. It is battle tested in large environments with hundreds of concurrent users. 
+There are number of applications that has been developed using it, such as:
+* TELE2 Logistics System for SAP ERP on HANA — user friendly interface for performing logistics operations (material 
+  procurements, movements and consumption) in SAP HANA (approx. 700 users);
+* MIMC Application Processing System — system for registration and expert evaluation applications to Moscow International 
+  Medical Cluster (approx. 100 users);
+* Construction Project Management System for Moscow Construction Department — system to manage construction projects in 
+  Moscow (more than 10000 users);
+* Construction Worker’s Safety Control System for Moscow Construction Department — IoT hardware and software solution, 
+  based on LoRaWAN technologies, to control worker’s presence, location and safety on construction sites 
+  (more than 3000 users);
+* Eldorado MVideo Enterprise Portal (EM Life) — enterprise collaboration and communication system integrated with 
+  SAP HCM, SAP BW and others corporate information systems at one of Russian largest retailer MVideo Eldorado 
+  (approx. 30000 users). EMLife won Russian Intranet Award in nomination Intranet of the Year and international silver 
+  award Intranet 2020     
 

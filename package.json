@@ -1,0 +1,16 @@
+{
+  "name": "annetteplatform.github.io",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/annetteplatform/annetteplatform.github.io.git",
+  "author": "Valery Lobachev <valery@lobachev.biz>",
+  "license": "MIT",
+  "devDependencies": {
+    "vuepress": "^1.7.1",
+    "vuepress-plugin-medium-zoom": "^1.1.9"
+  },
+  "scripts": {
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
+  }
+}

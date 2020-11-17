@@ -6,11 +6,11 @@ module.exports = ctx => ({
       title: "Annette Platform",
       description: "Platform to create business applications"
     },
-    "/ru/": {
-      lang: "ru-RU",
-      title: "Платформа Annette",
-      description: "Платформа для создания бизнес приложений"
-    }
+    // "/ru/": {
+    //   lang: "ru-RU",
+    //   title: "Платформа Annette",
+    //   description: "Платформа для создания бизнес приложений"
+    // }
   },
 
   //theme: '@vuepress/vue',
@@ -28,16 +28,31 @@ module.exports = ctx => ({
           "/guide/": getGuideSidebar("Guide")
         }
       },
-      "/ru/": {
-        label: "Русский",
-        selectText: "Языки",
-        ariaLabel: "Выберите язык",
-        lastUpdated: "Последнее обновление",
-        nav: require("./nav/ru"),
-        sidebar: {}
-      }
+      // "/ru/": {
+      //   label: "Русский",
+      //   selectText: "Языки",
+      //   ariaLabel: "Выберите язык",
+      //   lastUpdated: "Последнее обновление",
+      //   nav: require("./nav/ru"),
+      //   sidebar: {}
+      // }
     }
-  }
+  },
+
+  plugins: [
+    [
+      'vuepress-plugin-medium-zoom',
+      {
+        selector: 'img',
+        delay: 1000,
+        options: {
+          margin: 24,
+          background: '#BADA55',
+          scrollOffset: 0,
+        },
+      },
+    ],
+  ],
 });
 
 function getGuideSidebar(groupA) {
@@ -49,11 +64,13 @@ function getGetStartedSidebar(groupA, groupB) {
     {
       title: groupA,
       collapsable: false,
-      children: ["", "install"]
+      sidebarDepth: 2,
+      children: ["", "features", "install"]
     },
     {
       title: groupB,
       collapsable: false,
+      sidebarDepth: 2,
       children: [ "build"]
     }
   ];
