@@ -25,7 +25,7 @@ This helps Annette users to communicate, collaborate and make them more producti
 
 Business key features:
 
-* High performance that provides quick response and high user satisfaction (customer, employees, business partners)
+* High performance that provides quick response and high user satisfaction (customers, employees, business partners)
 * High scalability that allows you to optimize costs and scale computing resources in accordance with the needs
 * Low time-to-market due to rapid development and implementation of new services
 * Low total cost of ownership

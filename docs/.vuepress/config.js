@@ -47,7 +47,7 @@ module.exports = ctx => ({
         delay: 1000,
         options: {
           margin: 24,
-          background: '#BADA55',
+          background: '#FFFFFF',
           scrollOffset: 0,
         },
       },
