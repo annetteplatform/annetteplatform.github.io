@@ -2,7 +2,7 @@
 
 # Introduction
 
-Annette Platform is a platform to build business applications. It is designed to be highly available. 
+Annette Platform is a platform to build distributed, scalable, enterprise-wide business applications. It is designed to be highly available. 
 Annette Platform is “cloud-native” as it has been designed scale out in large, distributed environments,
 and works well inside containers. It uses in-memory calculation and non-blocking processing 
 technologies to provide high performance. Annette Platform has been build on microservice architecture. 
@@ -64,6 +64,7 @@ Annette is stable and mature platform. It is battle tested in large environments
 There are number of applications that has been developed using it, such as:
 * TELE2 Logistics System for SAP ERP on HANA — user friendly interface for performing logistics operations (material 
   procurements, movements and consumption) in SAP HANA (approx. 700 users);
+* Smart City IoT System for EMERCOM of Tyumen Region  - City environment monitoring system for EMERCOM of Tyumen Region
 * MIMC Application Processing System — system for registration and expert evaluation applications to Moscow International 
   Medical Cluster (approx. 100 users);
 * Construction Project Management System for Moscow Construction Department — system to manage construction projects in 
