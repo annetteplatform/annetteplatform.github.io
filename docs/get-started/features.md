@@ -187,6 +187,9 @@ Person Service has the following features:
 * Maintaining a directory of persons (user, contact person, etc.)
 * Flexible custom person attributes
 * Full text directory search including custom attribute search
+* Maintaining a directory of categories
+* Assignment of categories to persons
+
 
 ### Person
 
@@ -194,11 +197,14 @@ Person - a person who either uses the application directly (user) or the applica
 
 ![Person](./person.png)
 
-A person’s record contains unique id (person id), first name, middle name, last name, phone and email.
+A person’s record contains unique id (person id), first name, middle name, last name, category, phone and email.
+
+Category is a special attribute that assigned to each person. Category is used to classify persons and search purposes. For example, you can classify persons with two categories: user and contact person.
 
 Other attributes (such as address, gender, date of birth, etc.) can be flexibly configured in the attribute service to suit business requirements.
 
 Person service provides full-text search by person’s attributes.
+
 
 
 ## Organizational structure service
