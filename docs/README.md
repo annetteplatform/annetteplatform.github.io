@@ -20,13 +20,3 @@ footer: Apache 2 Licensed | Copyright © 2013-present Valery Lobachev
     <p>Annette platform has been build on microservice architecture. Each microservice runs multiple instances forming a cluster to provide load balancing and scaling.</p>
   </div>
 </div>
-
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-NH2SEQB56T"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-NH2SEQB56T');
-</script>

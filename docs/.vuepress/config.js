@@ -1,5 +1,29 @@
 module.exports = ctx => ({
-    head: [["link", {rel: "icon", href: "/favicon.png"}]],
+    head: [
+        ["link", {rel: "icon", href: "/favicon.png"}],
+        ['script', {
+            async: true,
+            src: 'https://www.googletagmanager.com/gtag/js?id=G-NH2SEQB56T'
+        }],
+        ['script', {}, `
+          window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-NH2SEQB56T');
+      `],
+        ['script', {}, `
+           (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+   m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+   (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+   ym(70086634, "init", {
+        clickmap:true,
+        trackLinks:true,
+        accurateTrackBounce:true
+   });
+    `]
+    ],
     locales: {
         "/": {
             lang: "en-US",
@@ -52,7 +76,7 @@ module.exports = ctx => ({
                     scrollOffset: 0,
                 },
             },
-        ],
+        ]
     ],
 });
 
