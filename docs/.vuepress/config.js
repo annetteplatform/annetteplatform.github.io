@@ -60,8 +60,9 @@ module.exports = (ctx) => ({
         lastUpdated: "Last Updated",
         nav: require("./nav/en"),
         sidebar: {
-          "/get-started/": getGetStartedSidebar("Get Started", "Advanced"),
+          "/get-started/": getGetStartedSidebar("Get Started"),
           "/case-studies/": getCaseStudiesSidebar("Case studies"),
+          "/installation/": getInstallationSidebar("Installation"),
           "/guide/": getGuideSidebar("Guide"),
         },
       },
@@ -99,13 +100,7 @@ function getGetStartedSidebar(groupA, groupB) {
       title: groupA,
       collapsable: false,
       sidebarDepth: 2,
-      children: ["", "features", "install"],
-    },
-    {
-      title: groupB,
-      collapsable: false,
-      sidebarDepth: 2,
-      children: ["build"],
+      children: ["", "features"],
     },
   ];
 }
@@ -118,6 +113,17 @@ function getCaseStudiesSidebar(groupA) {
       sidebarDepth: 2,
       children: [""],
       // children: ["", "tele2"/*, "emercom", "mimc", "cpm", "work-safety", "emlife"*/]
+    },
+  ];
+}
+
+function getInstallationSidebar(groupA) {
+  return [
+    {
+      title: groupA,
+      collapsable: false,
+      sidebarDepth: 1,
+      children: ["", "deployment"],
     },
   ];
 }

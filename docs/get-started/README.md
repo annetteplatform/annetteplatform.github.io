@@ -23,7 +23,7 @@ Annette platform provides set of microservices and libraries that helps to build
 This ecosystem can contain a number of applications that share commonly used data and have seamless integration. 
 This helps Annette users to communicate, collaborate and make them more productive. 
 
-Business key features:
+### Business key features
 
 * High performance that provides quick response and high user satisfaction (customers, employees, business partners)
 * High scalability that allows you to optimize costs and scale computing resources in accordance with the needs
@@ -42,7 +42,7 @@ Business key features:
   organization unit, organizational position etc. and provides powerful full text search capabilities.  
 
 
-Technical key features:
+### Technical key features
 
 * High performance provided by implementation of [Reactive Manifesto](https://www.reactivemanifesto.org/) principles.
 * High scalability provided by [Akka](https://akka.io/) clustering technologies and [Kubernetes](https://kubernetes.io/) 
