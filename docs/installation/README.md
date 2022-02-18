@@ -45,22 +45,20 @@ To download and install Apache Cassandra use the following [link](https://cassan
 
 As example of installation Cassandra cluster with 3 nodes (cas-01, cas-02, cas-03) on CentOS 7 you can use the following steps:
 
-1. Update CentOS and install net tools
+1. Set firewall rules
 
 ```
-yum update -y
-yum install -y net-tools unzip mc htop traceroute
+firewall-cmd --permanent --add-port=7000/tcp
+firewall-cmd --permanent --add-port=7001/tcp
+firewall-cmd --permanent --add-port=7199/tcp
+firewall-cmd --permanent --add-port=9042/tcp
+firewall-cmd --permanent --add-port=9160/tcp
+firewall-cmd --permanent --add-port=9142/tcp
+firewall-cmd —reload
 ```
 
-2. Disable firewalld
-
-```
-systemctl stop firewalld
-systemctl disable firewalld
-```
-
-3. Add Cassandra repo keys `sudo rpm --import https://www.apache.org/dist/cassandra/KEYS`
-4. Create Cassandra repo file `sudo vi /etc/yum.repos.d/cassandra.repo`
+2. Add Cassandra repo keys `sudo rpm --import https://www.apache.org/dist/cassandra/KEYS`
+3. Create Cassandra repo file `sudo vi /etc/yum.repos.d/cassandra.repo`
 
 ```
 [cassandra]
@@ -71,8 +69,8 @@ repo_gpgcheck=1
 gpgkey=https://www.apache.org/dist/cassandra/KEYS
 ```
 
-5. Install Cassandra `sudo yum install -y cassandra`
-6. Change Cassandra configuration file `sudo vi /etc/cassandra/conf/cassandra.yaml` to set cluster name and set Cassandra seed nodes:
+4. Install Cassandra `sudo yum install -y cassandra`
+5. Change Cassandra configuration file `sudo vi /etc/cassandra/conf/cassandra.yaml` to set cluster name and set Cassandra seed nodes:
 
 ```
 cluster_name: 'Annette Cluster'
@@ -81,14 +79,14 @@ listen_address: cas-01 # for cas-XX machine set cas-XX
 rpc_address: cas-01 # for cas-XX machine set cas-XX
 ```
 
-7. Change Cassandra JVM options `vi /etc/cassandra/conf/jvm.options`
+6. Change Cassandra JVM options `vi /etc/cassandra/conf/jvm.options`
 
 ```
 -Xms12G
 -Xmx12G
 ```
 
-8. Create Cassandra service file `sudo vi /etc/systemd/system/cassandra.service`
+7. Create Cassandra service file `sudo vi /etc/systemd/system/cassandra.service`
 
 ```
 [Unit]
@@ -112,7 +110,7 @@ Restart=always
 WantedBy=multi-user.target
 ```
 
-9. Start Cassandra daemon
+8. Start Cassandra daemon
 
 ```
 sudo systemctl daemon-reload
@@ -120,7 +118,7 @@ sudo systemctl start cassandra
 sudo systemctl enable cassandra
 ```
 
-10. Check Cassandra status `nodetool status`
+9. Check Cassandra status `nodetool status`
 
 To enable Cassandra authentication perform the following steps:
 
@@ -289,7 +287,7 @@ sudo sh hash.sh -p <secret password>
 $2y$12\$C/543Qr4Y7Zy4Wsq5WvN9uw.WAbpvGghpiXvk9WexZgDfAGuG0OEC
 ```
 
-12. Change admin password using result of pervious command `sudo vi /usr/share/elasticsearch/plugins/opendistro_security/securityconfig/internal_users.yml`
+12. Change admin password using result of previous command `sudo vi /usr/share/elasticsearch/plugins/opendistro_security/securityconfig/internal_users.yml`
 
 13. Rebuild passwords database for Open Distro
 
@@ -346,7 +344,7 @@ For production installation use [PostgreSQL Download Page](https://www.postgresq
 
 ## Keycloak
 
-Keycloak is open source Identity and Access Management System that provides user authentication using OpenID Connect. Annette Platform requires Keycloak version 12 or higher.
+Keycloak is open source Identity and Access Management System that provides user authentication using OpenID Connect. Annette Platform requires Keycloak versions 12.0.1 - 16.1.1.
 
 ### Local installation
 
@@ -371,8 +369,7 @@ services:
         POSTGRES_USER: keycloak
         POSTGRES_PASSWORD: password
   keycloak:
-      image: quay.io/keycloak/keycloak:latest
-      command: start-dev
+      image: quay.io/keycloak/keycloak:16.1.1
       environment:
         DB_VENDOR: POSTGRES
         DB_ADDR: postgres
@@ -380,9 +377,8 @@ services:
         DB_USER: keycloak
         DB_SCHEMA: public
         DB_PASSWORD: password
-        KEYCLOAK_ADMIN: admin 
-        KEYCLOAK_ADMIN_PASSWORD: admin
-
+        KEYCLOAK_USER: admin
+        KEYCLOAK_PASSWORD: admin
       ports:
         - 3080:8080
       depends_on:
@@ -394,3 +390,40 @@ services:
 ### Production installation
 
 For production installation use [Getting Started Guide](https://www.keycloak.org/guides#getting-started).
+
+### Configuration
+
+To configure Keycloak perform the following steps:
+
+1. Create realm `AnnetteDemo`
+
+![Create realm](./kc/kc01.png "Annette Demo")
+
+2. Clear fields `X-Frame-Options` and `Content-Security-Policy` in `Security Defenses` tab
+
+![](./kc/kc01a.png)
+
+3. Create client `annette-console` with root URL to your application
+
+![](./kc/kc02.png)
+![](./kc/kc03.png)
+
+4. (Optional) Remove unnecessary client scopes `roles` & `web-origins` to reduce size of JWT token
+
+![](./kc/kc04.png)
+
+5. Create mapper for person_id. This mapper will include user attribute person_id to JWT token attribute person_id. User attribute person_id links Keycloak user account to person in Annette Platform.
+
+![](./kc/kc05.png)
+
+6. Create new user. For Annette Demo create user Kristina Fisher with person_id P0001. This user has admin rights.
+
+![](./kc/kc06.png)
+
+7. Add user attribute person_id.
+
+![](./kc/kc07.png)
+
+8. Set password for new user
+
+![](./kc/kc08.png)
