@@ -124,7 +124,7 @@ function getInstallationSidebar(groupA) {
       title: groupA,
       collapsable: false,
       sidebarDepth: 2,
-      children: ["", "deployment"],
+      children: ["", "production"],
     },
   ];
 }
