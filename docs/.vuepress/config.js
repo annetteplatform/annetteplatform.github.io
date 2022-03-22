@@ -123,8 +123,8 @@ function getInstallationSidebar(groupA) {
     {
       title: groupA,
       collapsable: false,
-      sidebarDepth: 2,
-      children: ["", "production"],
+      sidebarDepth: 4,
+      children: ["development", "production"],
     },
   ];
 }

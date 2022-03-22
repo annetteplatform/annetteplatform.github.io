@@ -1,6 +1,5 @@
 # Production installation
 
-
 ## Prerequisites
 
 To run Annette Platform the following software should be installed:
@@ -246,8 +245,6 @@ Annette Platform requires PostgreSQL version 10 or higher.
 
 For production installation use [PostgreSQL Download Page](https://www.postgresql.org/download/).
 
-#### PostgreSQL databases configuration
-
 ### Keycloak
 
 Keycloak is open source Identity and Access Management System that provides user authentication using OpenID Connect.
@@ -255,7 +252,53 @@ Annette Platform requires Keycloak versions 12.0.1 - 16.1.1.
 
 For production installation use [Getting Started Guide](https://www.keycloak.org/guides#getting-started).
 
-#### Configuration
+## Configuration
+
+### PostgreSQL databases configuration
+
+You have to set up two databases:
+
+* BPM Repository database
+* Camunda database
+
+#### BPM Repository database
+
+To set up BPM Repository database perform the following steps:
+
+1. Create user to access to database (replace <SECRET_PASSWORD> with password you want to use):
+
+```sql
+CREATE USER bpm_repository;
+ALTER USER bpm_repository WITH ENCRYPTED password '<SECRET_PASSWORD>';
+```
+
+2. Create BPM Repository database (replace PREFIX_ with prefix you want to use):
+
+```sql
+CREATE DATABASE PREFIX_bpm_repository WITH ENCODING ='UTF8' OWNER = bpm_repository;
+```
+
+3. Execute [DDL script](https://github.com/annetteplatform/annette/blob/master/bpm/bpm-repository/sql/ddl.sql) to create
+   table and indexes in database
+
+#### Camunda database
+
+To set up Camunda database perform the following steps:
+
+1. Create user to access to database (replace <SECRET_PASSWORD> with password you want to use):
+
+```sql
+CREATE USER camunda;
+ALTER USER camunda WITH ENCRYPTED password '<SECRET_PASSWORD>';
+```
+
+2. Create BPM Repository database (replace PREFIX_ with prefix you want to use):
+
+```sql
+CREATE DATABASE PREFIX_camunda WITH ENCODING ='UTF8' OWNER = camunda;
+```
+
+### Keycloak configuration
 
 To configure Keycloak perform the following steps:
 
@@ -293,5 +336,302 @@ To configure Keycloak perform the following steps:
 
 ![](./kc/kc08.png)
 
+## Kubernetes deployment
 
-## Kubernetes deployment 
+Annette Platform is intended to run Kubernetes environment. It has been tested on OKD (open source version of Red Hat
+OpenShift, the well known Kubernetes distributive). To deploy in Kubernetes you have to prepare deployment scripts and
+deploy them.
+
+### Prepare deployment scripts
+
+To prepare deployment scripts perform the following steps:
+
+1. Prepare RBAC configuration (rbac.yml)
+2. Prepare secrets settings (secret.sh)
+3. Prepare config maps for Annette microservices and API gateway (config.yml)
+4. Prepare backend and frontend deployment scripts (backend.yml & frontend.yml)
+5. Prepare ingres (routes) settings (routes.yml)
+6. Prepare ignition settings (demo-ignition.yml)
+
+Templates of these scripts you can find in folder `deploy/k8s` of Annette Platform backend source code or in
+GitHub [deploy/k8s](https://github.com/annetteplatform/annette/tree/master/deploy/k8s)
+
+#### RBAC configuration (rbac.yml)
+
+RBAC configuration provide rights to get, watch and list pods in Kubernetes namespace. It is required to service
+discovery and to make Akka clusters.
+
+To create RBAC configuration open template file `rbac.yml` and replace $K8S_NAMESPACE$ with Kubernetes namespace you
+want to deploy Annette Platform in.
+
+#### Secrets settings (secret.sh)
+
+Secret settings are used to secure store logins and passwords to databases and services Annette Platform requires.
+
+To create secret settings script open template file `rbac.yml` and replace `$...$` with their respective values.
+
+There are the following secret settings:
+
+* `elastic-secret` provides access to indexing service (Elastic Search or OpenDistro for Elastic Search)
+* `cassandra-secret` provides access to Apache Cassandra database
+* `play-secret` provides secret key for signing session cookies and CSRF tokens and built in encryption utilities (
+  see [The Application Secret](https://www.playframework.com/documentation/2.8.x/ApplicationSecret))
+* `minio-secret` provides access to Minio service
+* `bpm-repository-secret` provides login & password to access PostgreSQL database for BPM repository microservice
+* `camunda-client-secret` provides login & password to access Camunda BPM engine. These credentials should be set after
+  deploy Camunda
+* `camunda-secret` provides login & password to access PostgreSQL database for Camunda BPM engine
+
+Replace `oc` with `kubectl` if you don't use OKD/OpenShift.
+
+#### Config maps for Annette microservices and API gateway (config.yml)
+
+Config maps are used to configure Annette Platform microservices and API gateways.
+
+To create config maps open template file `config.yml` and set up environment variables with their respective values as
+described below:
+
+* `elastic-config` provides configuration to access Elastic Search:
+
+    * INDEXING_URL - contains list of Elastic Search servers. For
+      example, `https://es-01.domain.com,es-02.domain.com,es-03.domain.com`. Required.
+    * INDEX_PREFIX - contains prefix for indexes created in Elastic Search. Don't forget to add a dash at the end. For
+      example: `annette-`. Optional.
+    * INDEXING_ALLOW_INSECURE - set true if you use sel signed certificate on your Elastic Search servers. Optional.
+
+* `cassandra-config` provides configuration to access Apache Cassandra:
+
+    * CASSANDRA_URL - contains list of Cassandra servers. For
+      example, `cas-01.domain.com,cas-02.domain.com,cas-03.domain.com`. Required.
+    * KEYSPACE_PREFIX - contains prefix for keyspaces created in Cassandra. Don't forget to add an underscore at the
+      end. For example: `annette_`. Optional.
+    * CASSANDRA_REPLICATION_FACTOR - replication factor used to create keyspaces. Optional.
+
+* `cms-minio-config` provides configuration to access Minio object storage:
+
+    * MINIO_URL - contains list of Cassandra servers. For example, `http://minio-01.domain.com:9000`. Required.
+    * CMS_STORAGE_BUCKET_PREFIX - contains prefix for buckets created in Minio. Don't forget to add a dash at the end.
+      For example: `annette-`. Optional.
+
+* `bpm-repository-config` provides configuration to access PostgreSQL:
+
+    * POSTGRES_SERVER - contains PostgreSQL server FDQN. For example, `pg-01.domain.com`. Required.
+    * POSTGRES_PREFIX - contains prefix for database. Don't forget to add an underscore at the end. For
+      example: `annette_`. Optional.
+
+* `camunda-client-config` provides configuration to access Camunda BPM engine:
+
+    * CAMUNDA_URL - contains camunda URL. For example, `http://camunda:8080/engine-rest/engine/default"`. Required,
+
+* `camunda-config` provides configuration for Camunda BPM engine:
+
+    * DB_DRIVER - contains database driver class. For example, `org.postgresql.Driver`. Required.
+    * DB_URL - contains PostgreSQL URL for Camunda database. For
+      example, `jdbc:postgresql://pg-01.domain.com:5432/annette_camunda`. Required.
+    * WAIT_FOR - contains PostgreSQL server name and port. For example, `pg-01.domain.com:5432`. Required.
+
+* `multi-instance-config` provides configuration for multi instance (clustered) microservice:
+    * JAVA_OPTS - provide Java options that contain path to logback and application configuration files. Required. For
+      example:
+      ```
+      -Dlogback.configurationFile=/opt/docker/conf/logback.k8s.xml-Dconfig.file=/opt/docker/conf/application.k8s.conf -Dlagom.circuit-breaker.default.enabled=off
+      ``` 
+    * REQUIRED_CONTACT_POINT_NR - number of microservice instances required to build cluster. Required.
+
+* `single-instance-config` provides configuration for single instance microservice:
+    * JAVA_OPTS- provide Java options that contain path to logback and application configuration files. Required. For
+      example:
+      ```
+      -Dlogback.configurationFile=/opt/docker/conf/logback.k8s.xml -Dconfig.file=/opt/docker/conf/application.k8s.conf -Dlagom.circuit-breaker.default.enabled=off -Dlagom.cluster.bootstrap.enabled=false -Dakka.cluster.min-nr-of-members=1 -Dlagom.cluster.join-self=on
+      ```
+    * REQUIRED_CONTACT_POINT_NR - number of microservice instances required to build cluster. Required.
+
+* `keycloak-config` provides Keycloak configuration for API gateway:
+    * KEYCLOAK_REALM - name of Keycloak realm. For example: `AnnetteDemo`.
+    * KEYCLOAK_URL - Keycloak URL. For example: `https://keycloak.domain.com/auth`.
+    * KEYCLOAK_SSL_REQUIRED - indicator if SSL required for Keycloak. For example: `external`
+    * KEYCLOAK_CLIENT - Keycloak client name. For example: `annette-console`
+    * KEYCLOAK_PUBLIC_CLIENT indicator if client is public. For example: `true`
+
+* `persons-k8s-config` provides example of configuration file for persons microservice that contains specific
+  attributes.
+    * application.k8s.conf - configuration file content.
+
+#### Backend and frontend deployment scripts (backend.yml & frontend.yml)
+
+Backend and frontend deployment scripts are used to deploy Annette Platform frontend, microservices and API gateways.
+
+Usually you don't need to change files `backend.yml` & `frontend.yml`. But sometimes you can change image version or
+metadata.
+
+`frontend.yml` contains Kubernetes Deployment and Service for deployment Annette Platform frontend.
+
+`backend.yml` contains Kubernetes Deployments and Services for deployment Annette Platform API gateway and
+microservices:
+
+* api-gateway - Annette Platform API gateway that is used authenticate and authorize incoming request and orchestrate
+  microservices. It requires the following config maps and secrets:
+    * multi-instance-config
+    * keycloak-config
+    * play-secret
+    * cms-minio-config
+    * minio-secret
+    * camunda-client-config
+    * camunda-client-secret
+
+* application - application microservice that manage Annette applications, languages and translations. It requires the
+  following config maps and secrets:
+    * multi-instance-config
+    * elastic-config
+    * elastic-secret
+    * cassandra-config
+    * cassandra-secret
+    * play-secret
+
+* authorization - authorization microservice that control authorization roles and permission assignments to Annette
+  principals. It requires the following config maps and secrets:
+    * multi-instance-config
+    * elastic-config
+    * elastic-secret
+    * cassandra-config
+    * cassandra-secret
+    * play-secret
+
+* subscriptions - subscriptions microservice that allow users to subscribe to CMS blogs/spaces, etc. It requires the
+  following config maps and secrets:
+    * multi-instance-config
+    * elastic-config
+    * elastic-secret
+    * cassandra-config
+    * cassandra-secret
+    * play-secret
+
+* principal-groups - principal-groups microservice that stores groups of Annette Principals. It requires the following
+  config maps and secrets:
+    * multi-instance-config
+    * elastic-config
+    * elastic-secret
+    * cassandra-config
+    * cassandra-secret
+    * play-secret
+
+* persons - persons microservice that stores person's master data and their attributes. To configure person attributes
+  specific application configuration file mounted using volumeMounts. It requires the following config maps and secrets:
+    * multi-instance-config
+    * elastic-config
+    * elastic-secret
+    * cassandra-config
+    * cassandra-secret
+    * play-secret
+    * persons-k8s-config
+
+* org-structure - org-structure microservice that stores and manage organizational structures and roles. To configure
+  organizational unit and position attributes specific application configuration file mounted using volumeMounts. It
+  requires the following config maps and secrets:
+    * multi-instance-config
+    * elastic-config
+    * elastic-secret
+    * cassandra-config
+    * cassandra-secret
+    * play-secret
+    * org-structure-k8s-config
+
+* cms - CMS microservice that manage CMS content: blogs, posts, spaces, pages, media content and documents. It requires
+  the following config maps and secrets:
+    * multi-instance-config
+    * elastic-config
+    * elastic-secret
+    * cassandra-config
+    * cassandra-secret
+    * play-secret
+    * cms-minio-config
+    * minio-secret
+
+* bpm-repository - BPM repository microservice that manage BPM models, data schemas and business processes. It requires
+  the following config maps and secrets:
+    * single-instance-config
+    * bpm-repository-config
+    * bpm-repository-secret
+    * play-secret
+
+* camunda - Camunda BPM engine microservice. It requires the following config maps and secrets:
+    * camunda-config
+    * camunda-secret
+
+#### Routes settings (routes.yml)
+
+An OKD routes exposes a service at a host name, such as annette-console.domain.com, so that external clients can reach
+it by name.
+
+To create routes open template file `routes.yml` and set up host names with their respective values as described below:
+
+* annette-frontend links to Annette Platform frontend service (annette-frontend)
+* annette-backend links to Annette Platform API gateway service (api-gateway)
+* annette-camunda links to Camunda BPM engine service (camunda)
+
+#### Ignition settings (demo-ignition.yml)
+
+Template file `demo-ignition.yml` contains Kubernetes Job script that runs Annette Demo Ignition. Annette Demo Ignition
+initializes the following data:
+
+* authorization role and assignments
+* person's master data and their attributes
+* organizational structure
+
+To prepare initialization Annette Platform according your requirements you need to perform the following steps:
+
+1. Fork subproject `ignition/ignition-demo`
+2. Change ignition configuration in `conf` folder according your requirements
+3. Build docker image using command `sbt demo-ignition/docker:publishLocal`
+4. Push image to your image repository
+5. Change `demo-ignition.yml` to use your image
+
+### Deployment
+
+After deployment scripts preparation you can deploy Annette Platform to OKD/OpenShift by performing the following steps:
+
+1. Create Kubernetes namespace (project)
+
+```bash
+oc new-project <project_name>
+```
+
+2. Set up RBAC
+
+```bash
+oc apply -f deploy/k8s/rbac.yml
+```
+
+3. Set up secrets settings
+
+```bash
+deploy/k8s/secret.sh
+```
+
+5. Set up config maps for Annette microservices and API gateway
+
+```bash
+oc apply -f deploy/k8s/config.yml
+```
+
+6. Deploy backend and frontend
+
+```bash
+oc apply -f deploy/k8s/backend.yml
+oc apply -f deploy/k8s/frontend.yml
+```
+
+7. Set up routes
+
+```bash
+oc apply -f deploy/k8s/routes.yml
+```
+
+8. Setup Camunda login/password. You need open Camunda URL you defined in route `annette-camunda` and enter Camunda
+   credentials you defined in secret `camunda-client-secret` in form appeared.
+
+9. Perform initialization of Annette Platform by running ignition job
+
+```bash
+oc apply -f deploy/k8s/demo-ignition.yml
+```
