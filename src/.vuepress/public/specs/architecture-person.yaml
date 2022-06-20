@@ -68,23 +68,23 @@ paths:
               schema:
                 type: object
                 example:
-                id: P0001
-                lastname: Fisher
-                firstname: Kristina
-                categoryId: PERSON
-                phone: "(754)-566-6120"
-                email: kristina.fisher@example.com
-                source: SAP
-                externalId: SAP-P0001
-                attributes:
-                  salary: '110000'
-                  birthDate: '1977-03-30'
-                  isMarried: 'true'
-                  gender: F
-                updatedAt: '2022-03-20T18:51:13.624899Z'
-                updatedBy:
-                  principalType: person
-                  principalId: P0001
+                  id: P0001
+                  lastname: Fisher
+                  firstname: Kristina
+                  categoryId: PERSON
+                  phone: "(754)-566-6120"
+                  email: kristina.fisher@example.com
+                  source: SAP
+                  externalId: SAP-P0001
+                  attributes:
+                    salary: '110000'
+                    birthDate: '1977-03-30'
+                    isMarried: 'true'
+                    gender: F
+                  updatedAt: '2022-03-20T18:51:13.624899Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
         '400':
           description: Person already exist
           content:
@@ -707,8 +707,8 @@ paths:
     post:
       tags:
         - Person category
-      summary: Create person category
-      description: Create person category. Required permission `annette.person.category.maintain.all`.
+      summary: Create category
+      description: Create category. Required permission `annette.person.category.maintain.all`.
       requestBody:
         content:
           application/json:
@@ -747,8 +747,8 @@ paths:
     post:
       tags:
         - Person category
-      summary: Update person category
-      description: Update person category. Required permission `annette.person.category.maintain.all`.
+      summary: Update category
+      description: Update category. Required permission `annette.person.category.maintain.all`.
       requestBody:
         content:
           application/json:
@@ -787,8 +787,8 @@ paths:
     post:
       tags:
         - Person category
-      summary: Delete person category
-      description: Delete person category. Required permission `annette.person.category.maintain.all`.
+      summary: Delete category
+      description: Delete category. Required permission `annette.person.category.maintain.all`.
       requestBody:
         content:
           application/json:
@@ -965,4 +965,3 @@ paths:
                     - id: "PERSON"
                       score: 1.2039728164672852
                       updatedAt: "2021-12-16T08:56:34.932113Z"
-
