@@ -1,6 +1,6 @@
 ---
 home: true
-heroImage: /annette-logo2.svg
+heroImage: /annette_logo.svg
 actionText: Get Started →
 actionLink: /get-started/
 footer: Apache 2 Licensed | Copyright © 2013-present Valery Lobachev

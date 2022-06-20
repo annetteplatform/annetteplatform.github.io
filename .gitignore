@@ -1,4 +1,4 @@
-docs/.vuepress/dist
+src/.vuepress/dist
 
 
 logs
@@ -102,7 +102,7 @@ typings/
 .nuxt
 
 # vuepress build output
-/docs/.vuepress/dist
+/src/.vuepress/dist
 
 # Serverless directories
 .serverless

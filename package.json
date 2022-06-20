@@ -7,12 +7,13 @@
   "license": "MIT",
   "devDependencies": {
     "@vuepress/plugin-google-analytics": "^1.9.5",
-    "vuepress": "^1.9.5",
     "@vuepress/plugin-medium-zoom": "^1.9.5",
-    "vuepress-plugin-metrika": "1.0.3"
+    "vuepress": "^1.9.5",
+    "vuepress-plugin-metrika": "1.0.3",
+    "vuepress-theme-openapi": "^1.6.0"
   },
   "scripts": {
-    "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs"
+    "docs:dev": "vuepress dev src",
+    "docs:build": "vuepress build src"
   }
 }

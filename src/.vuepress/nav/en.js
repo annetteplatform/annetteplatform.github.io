@@ -11,10 +11,11 @@ module.exports = [
     text: "Installation",
     link: "/installation/",
   },
-  // {
-  //     text: 'Guide',
-  //     link: '/guide/'
-  // },
+  {
+    text: "API",
+    link: "/api/",
+  },
+
   {
     text: "GitHub",
     link: "https://github.com/annetteplatform/annette",
