@@ -623,14 +623,12 @@ paths:
           example: true
       requestBody:
         description: person ids
-        schema:
-          type: array
-          items:
-            type: string
         content:
           application/json:
             schema:
               type: array
+              items:
+                type: string
               example: [ 'P0001', 'P0002']
       security:
         - bearerAuth: [ ]
@@ -884,14 +882,12 @@ paths:
           example: true
       requestBody:
         description: category ids
-        schema:
-          type: array
-          items:
-            type: string
         content:
           application/json:
             schema:
               type: array
+              items:
+                type: string
               example: [ "PERSON", "CONTACT"]
       security:
         - bearerAuth: [ ]
@@ -902,6 +898,8 @@ paths:
             application/json:
               schema:
                 type: array
+                items:
+                  type: object
                 example:
                   - id: PERSON
                     name: Person
@@ -924,8 +922,6 @@ paths:
         Find categories using query provided in request body. Requires permission `annette.person.category.maintain.all` to get data.
       requestBody:
         description: category query
-          schema:
-            type: object
         content:
           application/json:
             schema:
