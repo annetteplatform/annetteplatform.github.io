@@ -257,23 +257,23 @@ paths:
       tags:
         - Person
       summary: Get person by id
-      description: | 
-       Get person by id.
+      description: |
+        Get person by id.
         
-       If fromReadSide == false 
-        * reads data from write side of CQRS data model and returns most recent person record
-        * endpoint authorized if:
-          * user has permission `annette.person.person.maintain.all` OR
-          * user has permission `annette.person.person.maintain.subordinate` and assigned as chief of unit person assigned to OR
-          * user has permission `annette.person.person.maintain.orgUnit` for unit person assigned to
+        If fromReadSide == false 
+         * reads data from write side of CQRS data model and returns most recent person record
+         * endpoint authorized if:
+           * user has permission `annette.person.person.maintain.all` OR
+           * user has permission `annette.person.person.maintain.subordinate` and assigned as chief of unit person assigned to OR
+           * user has permission `annette.person.person.maintain.orgUnit` for unit person assigned to
         
-       otherwise 
-        * it gets data from read side (usually it is faster than get data from write side) 
-        * endpoint authorized if:
-          * user has permission `annette.person.person.view.all` OR
-          * user has permission `annette.person.person.maintain.all` OR
-          * user has permission `annette.person.person.maintain.subordinate` and assigned as chief of unit person assigned to OR
-          * user has permission `annette.person.person.maintain.orgUnit` for unit person assigned to
+        otherwise 
+         * it gets data from read side (usually it is faster than get data from write side) 
+         * endpoint authorized if:
+           * user has permission `annette.person.person.view.all` OR
+           * user has permission `annette.person.person.maintain.all` OR
+           * user has permission `annette.person.person.maintain.subordinate` and assigned as chief of unit person assigned to OR
+           * user has permission `annette.person.person.maintain.orgUnit` for unit person assigned to
       parameters:
         - name: id
           in: path
@@ -349,12 +349,6 @@ paths:
         * it gets data from read side (usually it is faster than get data from write side) 
         * user has permission `annette.person.person.maintain.all` or `annette.person.person.view.all`
       parameters:
-        - name: body
-          in: body
-          description: person ids
-          schema:
-            type: array
-          required: true
         - name: withAttributes
           in: query
           description: list of attributes separated by comma or `all` to get all attributes
@@ -370,10 +364,13 @@ paths:
           required: true
           example: true
       requestBody:
+        description: person ids
         content:
           application/json:
             schema:
               type: array
+              items:
+                type: string
               example: [ 'P0001', 'P0002']
       security:
         - bearerAuth: [ ]
@@ -384,6 +381,8 @@ paths:
             application/json:
               schema:
                 type: array
+                items:
+                  type: object
                 example:
                   - id: P0001
                     lastname: Fisher
@@ -422,14 +421,8 @@ paths:
       summary: Find persons
       description: |
         Find persons using query provided in request body. Requires permission `annette.person.person.maintain.all` or `annette.person.person.view.all`.
-      parameters:
-        - name: body
-          in: body
-          description: person query
-          schema:
-            type: object
-          required: true
       requestBody:
+        description: person query
         content:
           application/json:
             schema:
@@ -465,9 +458,9 @@ paths:
                 example:
                   total: 1
                   hits:
-                   - id: P-0001
-                     score: 1.2039728164672852
-                     updatedAt: "2021-12-16T08:56:34.932113Z"
+                    - id: P-0001
+                      score: 1.2039728164672852
+                      updatedAt: "2021-12-16T08:56:34.932113Z"
   /api/annette/v1/person/getPersonMetadata:
     get:
       tags:
@@ -614,12 +607,6 @@ paths:
         * it gets data from read side (usually it is faster than get data from write side) 
         * user has permission `annette.person.person.maintain.all` or `annette.person.person.view.all`
       parameters:
-        - name: body
-          in: body
-          description: person ids
-          schema:
-            type: array
-          required: true
         - name: withAttributes
           in: query
           description: list of attributes separated by comma or `all` to get all attributes
@@ -635,6 +622,11 @@ paths:
           required: true
           example: true
       requestBody:
+        description: person ids
+        schema:
+          type: array
+          items:
+            type: string
         content:
           application/json:
             schema:
@@ -883,12 +875,6 @@ paths:
         * it gets data from read side (usually it is faster than get data from write side)
         * requires permission `annette.person.category.maintain.all` or `annette.person.category.view.all`
       parameters:
-        - name: body
-          in: body
-          description: category ids
-          schema:
-            type: array
-          required: true
         - name: fromReadSide
           in: path
           description: indicator to get data form read side
@@ -897,6 +883,11 @@ paths:
           required: true
           example: true
       requestBody:
+        description: category ids
+        schema:
+          type: array
+          items:
+            type: string
         content:
           application/json:
             schema:
@@ -931,14 +922,10 @@ paths:
       summary: Find categories
       description: |
         Find categories using query provided in request body. Requires permission `annette.person.category.maintain.all` to get data.
-      parameters:
-        - name: body
-          in: body
-          description: category query
+      requestBody:
+        description: category query
           schema:
             type: object
-          required: true
-      requestBody:
         content:
           application/json:
             schema:
