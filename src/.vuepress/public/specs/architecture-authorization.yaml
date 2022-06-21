@@ -204,7 +204,7 @@ paths:
           example: 'admin-role'
         - name: fromReadSide
           in: path
-          description: indicator to get data form read side
+          description: indicator to get data from read side
           schema:
             type: boolean
           required: true
@@ -269,7 +269,7 @@ paths:
           required: true
         - name: fromReadSide
           in: path
-          description: indicator to get data form read side
+          description: indicator to get data from read side
           schema:
             type: boolean
           required: true
@@ -467,7 +467,7 @@ paths:
           example: 'admin-role'
         - name: fromReadSide
           in: path
-          description: indicator to get data form read side
+          description: indicator to get data from read side
           schema:
             type: boolean
           required: true

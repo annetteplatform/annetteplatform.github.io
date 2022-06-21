@@ -219,7 +219,7 @@ paths:
           example: 'en'
         - name: fromReadSide
           in: path
-          description: indicator to get data form read side
+          description: indicator to get data from read side
           schema:
             type: boolean
           required: true
@@ -274,7 +274,7 @@ paths:
           required: true
         - name: fromReadSide
           in: path
-          description: indicator to get data form read side
+          description: indicator to get data from read side
           schema:
             type: boolean
           required: true
@@ -358,7 +358,7 @@ paths:
                 size: 10
                 filter: en
                 sortBy:
-                  - field: name,
+                  - field: name
                     descending: false
       security:
         - bearerAuth: [ ]
@@ -506,7 +506,7 @@ paths:
           example: "annette.console"
         - name: fromReadSide
           in: path
-          description: indicator to get data form read side
+          description: indicator to get data from read side
           schema:
             type: boolean
           required: true
@@ -556,7 +556,7 @@ paths:
           required: true
         - name: fromReadSide
           in: path
-          description: indicator to get data form read side
+          description: indicator to get data from read side
           schema:
             type: boolean
           required: true
@@ -613,7 +613,7 @@ paths:
                 size: 10
                 filter: console
                 sortBy:
-                  - field: name,
+                  - field: name
                     descending: false
       security:
         - bearerAuth: [ ]
@@ -1009,7 +1009,7 @@ paths:
           example: 'annette-console'
         - name: fromReadSide
           in: path
-          description: indicator to get data form read side
+          description: indicator to get data from read side
           schema:
             type: boolean
           required: true
@@ -1072,7 +1072,7 @@ paths:
           required: true
         - name: fromReadSide
           in: path
-          description: indicator to get data form read side
+          description: indicator to get data from read side
           schema:
             type: boolean
           required: true
@@ -1143,7 +1143,7 @@ paths:
                 size: 10
                 filter: console
                 sortBy:
-                  - field: name,
+                  - field: name
                     descending: false
       security:
         - bearerAuth: [ ]

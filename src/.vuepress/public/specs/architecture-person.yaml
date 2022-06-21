@@ -291,7 +291,7 @@ paths:
           example: 'all'
         - name: fromReadSide
           in: path
-          description: indicator to get data form read side
+          description: indicator to get data from read side
           schema:
             type: boolean
           required: true
@@ -358,7 +358,7 @@ paths:
           example: 'all'
         - name: fromReadSide
           in: path
-          description: indicator to get data form read side
+          description: indicator to get data from read side
           schema:
             type: boolean
           required: true
@@ -444,7 +444,7 @@ paths:
                 externalIds:
                 query:
                 sortBy:
-                  - field: name,
+                  - field: name
                     descending: false
       security:
         - bearerAuth: [ ]
@@ -562,7 +562,7 @@ paths:
           example: 'all'
         - name: fromReadSide
           in: path
-          description: indicator to get data form read side
+          description: indicator to get data from read side
           schema:
             type: boolean
           required: true
@@ -591,13 +591,13 @@ paths:
                   code: "annette.personService.person.notFound"
                   errorCode: 404
                   params: { }
-  /api/annette/v1/person/getPersonAttributes/{fromReadSide}:
+  /api/annette/v1/person/getPersonsAttributes/{fromReadSide}:
     post:
       tags:
         - Person
-      summary: Get persons by ids
+      summary: Get persons attributes by ids
       description: |
-        Get persons by ids provided in request body
+        Get persons attributes by ids provided in request body
         
         If fromReadSide == false 
         * reads data from write side of CQRS data model and returns most recent person record
@@ -616,7 +616,7 @@ paths:
           example: 'all'
         - name: fromReadSide
           in: path
-          description: indicator to get data form read side
+          description: indicator to get data from read side
           schema:
             type: boolean
           required: true
@@ -826,7 +826,7 @@ paths:
           example: "PERSON"
         - name: fromReadSide
           in: path
-          description: indicator to get data form read side
+          description: indicator to get data from read side
           schema:
             type: boolean
           required: true
@@ -875,7 +875,7 @@ paths:
       parameters:
         - name: fromReadSide
           in: path
-          description: indicator to get data form read side
+          description: indicator to get data from read side
           schema:
             type: boolean
           required: true
@@ -919,7 +919,8 @@ paths:
         - Person category
       summary: Find categories
       description: |
-        Find categories using query provided in request body. Requires permission `annette.person.category.maintain.all` to get data.
+        Find categories using query provided in request body. 
+        Requires permission `annette.person.category.maintain.all` or `annette.person.category.view.all`
       requestBody:
         description: category query
         content:
@@ -931,7 +932,7 @@ paths:
                 size: 10
                 filter: person
                 sortBy:
-                  - field: name,
+                  - field: name
                     descending: false
       security:
         - bearerAuth: [ ]

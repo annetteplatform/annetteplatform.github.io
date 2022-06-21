@@ -101,7 +101,7 @@ module.exports = (ctx) => ({
                     // title: 'API',
                     collapsable: false,
                     sidebarDepth: 4,
-                    children: ['', 'application', 'authorization', 'person'],
+                    children: ['', 'application', 'authorization', 'person', 'org-structure'],
                 },
             ],
             '/guide/': [{
