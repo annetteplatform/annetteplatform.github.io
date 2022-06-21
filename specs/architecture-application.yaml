@@ -1,0 +1,1202 @@
+openapi: 3.0.0
+info:
+  description: >
+    Application API provides endpoints to maintain the following entities:
+    
+    * Keycloak configuration - controls Keycloak configurations for frontend applications
+    
+    * language - control languages to enable localization frontend applications
+    
+    * translation - control translations available for frontend applications
+    
+    * application - control applications metadata
+  version: "0.5.0"
+  title: "Application API"
+
+servers:
+  - url: http://localhost:9000
+    description: Localhost
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Keycloak
+    description: provides applications with Keycloak configuration
+  - name: Language
+    description: provides CRUD operations for languages used in platform
+  - name: Translation
+    description: provides CRUD operations for translations
+  - name: Application
+    description: provides CRUD operations for applications
+
+paths:
+  /api/annette/v1/auth/keycloak/:
+    get:
+      tags:
+        - Keycloak
+      summary: Get default Keycloak configuration
+      description: Get default Keycloak configuration
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  realm: AnnetteDemo
+                  auth-server-url: "https://kc.your-company.com/auth"
+                  ssl-required: "external"
+                  resource: "annette-console"
+                  public-client: true
+  /api/annette/v1/auth/keycloak/{appId}:
+    get:
+      tags:
+        - Keycloak
+      summary: Get application's Keycloak configuration
+      description: Get Keycloak configuration for specific application
+      parameters:
+        - name: appId
+          in: path
+          description: application id
+          schema:
+            type: string
+          required: true
+          example: 'finance'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  realm: AnnetteDemo
+                  auth-server-url: "https://kc.your-company.com/auth"
+                  ssl-required: "external"
+                  resource: "finance-app"
+                  public-client: true
+
+  /api/annette/v1/application/createLanguage:
+    post:
+      tags:
+        - Language
+      summary: Create language
+      description: Create language. Required permission `annette.application.language.maintain.all`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: "en"
+                name: "English"
+
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: "en"
+                  name: "English"
+                  updatedAt: "2022-06-16T12:02:05.716892Z"
+                  updatedBy:
+                    principalType: "person"
+                    principalId: "P0001"
+        '400':
+          description: Language already exist
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.applicationService.language.languageAlreadyExist"
+                  errorCode: 400
+                  params: { }
+  /api/annette/v1/application/updateLanguage:
+    post:
+      tags:
+        - Language
+      summary: Update language
+      description: Update language. Required permission `annette.application.language.maintain.all`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: "en"
+                name: "English US"
+
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: "en"
+                  name: "English US"
+                  updatedAt: "2022-06-16T12:02:05.716892Z"
+                  updatedBy:
+                    principalType: "person"
+                    principalId: "P0001"
+        '404':
+          description: Language not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.applicationService.language.languageNotFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/application/deleteLanguage:
+    post:
+      tags:
+        - Language
+      summary: Delete language
+      description: Delete language. Required permission `annette.application.language.maintain.all`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: "en"
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+        '404':
+          description: Language not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.applicationService.language.languageNotFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/application/getLanguageById/{id}/{fromReadSide}:
+    get:
+      tags:
+        - Language
+      summary: Get language by id
+      description: | 
+       Get language by id.
+        
+       If fromReadSide == false 
+        * reads data from write side of CQRS data model and returns most recent language record
+        * requires permission `annette.application.language.maintain.all` to get data
+        
+       otherwise 
+        * it gets data from read side (usually it is faster than get data from write side) 
+        * no permissions required
+      parameters:
+        - name: id
+          in: path
+          description: language id
+          schema:
+            type: string
+          required: true
+          example: 'en'
+        - name: fromReadSide
+          in: path
+          description: indicator to get data from read side
+          schema:
+            type: boolean
+          required: true
+          example: true
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: "en"
+                  name: "English US"
+                  updatedAt: "2022-06-16T12:02:05.716892Z"
+                  updatedBy:
+                    principalType: "person"
+                    principalId: "P0001"
+        '404':
+          description: Language not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.applicationService.language.languageNotFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/application/getLanguagesById/{fromReadSide}:
+    post:
+      tags:
+        - Language
+      summary: Get languages by ids
+      description: |
+        Get languages by ids provided in request body
+        
+        If fromReadSide == false 
+         * reads data from write side of CQRS data model and returns most recent language records
+         * requires permission `annette.application.language.maintain.all` to get data
+        
+        otherwise 
+         * it gets data from read side (usually it is faster than get data from write side) 
+         * no permissions required
+      parameters:
+        - name: body
+          in: body
+          description: language ids
+          schema:
+            type: array
+          required: true
+        - name: fromReadSide
+          in: path
+          description: indicator to get data from read side
+          schema:
+            type: boolean
+          required: true
+          example: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              example: [ 'en', 'de', 'fr']
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                example:
+                  - id: "en"
+                    name: "English US"
+                    updatedAt: "2022-06-16T12:02:05.716892Z"
+                    updatedBy:
+                      principalType: "person"
+                      principalId: "P0001"
+                  - id: "fr"
+                    name: "French"
+                    updatedAt: "2022-06-16T12:02:05.716892Z"
+                    updatedBy:
+                      principalType: "person"
+                      principalId: "P0001"
+  /api/annette/v1/application/getAllLanguages:
+    get:
+      tags:
+        - Language
+      summary: Get all languages
+      description: |
+        Get all languages. No authentication or permission required.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                example:
+                  - id: "en"
+                    name: "English US"
+                    updatedAt: "2022-06-16T12:02:05.716892Z"
+                    updatedBy:
+                      principalType: "person"
+                      principalId: "P0001"
+                  - id: "fr"
+                    name: "French"
+                    updatedAt: "2022-06-16T12:02:05.716892Z"
+                    updatedBy:
+                      principalType: "person"
+                      principalId: "P0001"
+  /api/annette/v1/application/findLanguages:
+    post:
+      tags:
+        - Language
+      summary: Find languages
+      description: |
+        Find languages using query provided in request body. Requires permission `annette.application.language.maintain.all`.
+      parameters:
+        - name: body
+          in: body
+          description: language query
+          schema:
+            type: object
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                offset: 0
+                size: 10
+                filter: en
+                sortBy:
+                  - field: name
+                    descending: false
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  total: 1
+                  hits:
+                   - id: en
+                     score: 1.2039728164672852
+                     updatedAt: "2021-12-16T08:56:34.932113Z"
+
+  /api/annette/v1/application/createTranslation:
+    post:
+      tags:
+        - Translation
+      summary: Create translation
+      description: Create translation. Required permission `annette.application.translation.maintain.all`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: "annette.console"
+                name: "Translation for Annette Console application"
+
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: "annette.console"
+                  name: "Translation for Annette Console application"
+                  updatedAt: "2022-06-16T12:02:05.716892Z"
+                  updatedBy:
+                    principalType: "person"
+                    principalId: "P0001"
+        '400':
+          description: Translation already exist
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.applicationService.translation.translationAlreadyExist"
+                  errorCode: 400
+                  params: { }
+  /api/annette/v1/application/updateTranslation:
+    post:
+      tags:
+        - Translation
+      summary: Update translation
+      description: Update translation. Required permission `annette.application.translation.maintain.all`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: "annette.console"
+                name: "Translation for Annette Console application"
+
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: "annette.console"
+                  name: "Translation for Annette Console application"
+                  updatedAt: "2022-06-16T12:02:05.716892Z"
+                  updatedBy:
+                    principalType: "person"
+                    principalId: "P0001"
+        '404':
+          description: Translation not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.applicationService.translation.translationNotFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/application/deleteTranslation:
+    post:
+      tags:
+        - Translation
+      summary: Delete translation
+      description: Delete translation. Required permission `annette.application.translation.maintain.all`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: "annette.console"
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+        '404':
+          description: Translation not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.applicationService.translation.translationNotFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/application/getTranslationById/{id}/{fromReadSide}:
+    get:
+      tags:
+        - Translation
+      summary: Get translation by id
+      description: |
+        Get translation by id. Requires permission `annette.application.translation.maintain.all` to get data.
+        
+        If fromReadSide == false it reads data from write side of CQRS data model and returns most recent translation records,
+        otherwise it gets data from read side (usually it is faster than get data from write side)
+      parameters:
+        - name: id
+          in: path
+          description: translation id
+          schema:
+            type: string
+          required: true
+          example: "annette.console"
+        - name: fromReadSide
+          in: path
+          description: indicator to get data from read side
+          schema:
+            type: boolean
+          required: true
+          example: true
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: "annette.console"
+                  name: "Translation for Annette Console application"
+                  updatedAt: "2022-06-16T12:02:05.716892Z"
+                  updatedBy:
+                    principalType: "person"
+                    principalId: "P0001"
+        '404':
+          description: Translation not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.applicationService.translation.translationNotFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/application/getTranslationsById/{fromReadSide}:
+    post:
+      tags:
+        - Translation
+      summary: Get translations by ids
+      description: |
+        Get translations by ids provided in request body. Requires permission `annette.application.translation.maintain.all` to get data.
+        
+        If fromReadSide == false it reads data from write side of CQRS data model and returns most recent translation records,
+        otherwise it gets data from read side (usually it is faster than get data from write side)
+      parameters:
+        - name: body
+          in: body
+          description: translation ids
+          schema:
+            type: array
+          required: true
+        - name: fromReadSide
+          in: path
+          description: indicator to get data from read side
+          schema:
+            type: boolean
+          required: true
+          example: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              example: [ "annette.console", "annette.applications", "annette.cms"]
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                example:
+                  - id: "annette.console"
+                    name: "Translation for Annette Console application"
+                    updatedAt: "2022-06-16T12:02:05.716892Z"
+                    updatedBy:
+                      principalType: "person"
+                      principalId: "P0001"
+                  - id: "annette.application"
+                    name: "Translation for Annette Console application"
+                    updatedAt: "2022-06-16T12:02:05.716892Z"
+                    updatedBy:
+                      principalType: "person"
+                      principalId: "P0001"
+  /api/annette/v1/application/findTranslations:
+    post:
+      tags:
+        - Translation
+      summary: Find translations
+      description: |
+        Find translations using query provided in request body. Requires permission `annette.application.translation.maintain.all` to get data.
+      parameters:
+        - name: body
+          in: body
+          description: translation query
+          schema:
+            type: object
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                offset: 0
+                size: 10
+                filter: console
+                sortBy:
+                  - field: name
+                    descending: false
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  total: 1
+                  hits:
+                    - id: "annette.console"
+                      score: 1.2039728164672852
+                      updatedAt: "2021-12-16T08:56:34.932113Z"
+  /api/annette/v1/application/updateTranslationJson:
+    post:
+      tags:
+        - Translation
+      summary: Create or update translation JSON for language specified
+      description: Create or update translation JSON for language specified. Required permission `annette.application.translation.maintain.all`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                translationId: "annette.console"
+                languageId: "en"
+                json:
+                  annette:
+                    console:
+                      title: "Annette Console"
+                      welcome: "Welcome {username} to Annette Console"
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+        '404':
+          description: Translation not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.applicationService.translation.translationNotFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/application/deleteTranslationJson:
+    post:
+      tags:
+        - Translation
+      summary: Delete translation JSON for language specified
+      description: Delete translation JSON for language specified. Required permission `annette.application.translation.maintain.all`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                translationId: "annette.console"
+                languageId: "en"
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+        '404':
+          description: Translation not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.applicationService.translation.translationNotFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/application/getTranslationLanguages/{id}:
+    get:
+      tags:
+        - Translation
+      summary: Get languages defined in translation
+      description: |
+        Get languages defined in translation (languages for which translations have been created). 
+        Requires permission `annette.application.translation.maintain.all` to get data.
+      parameters:
+        - name: id
+          in: path
+          description: translation id
+          schema:
+            type: string
+          required: true
+          example: "annette.console"
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                example:
+                  - en
+                  - de
+                  - fr
+        '404':
+          description: Translation not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.applicationService.translation.translationNotFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/application/getTranslationJson/{id}/{languageId}:
+    get:
+      tags:
+        - Translation
+      summary: Get translation JSON by translation id and language id
+      description: |
+        Get translation JSON by translation id and language id. No authentication or permission required.
+      parameters:
+        - name: id
+          in: path
+          description: translation id
+          schema:
+            type: string
+          required: true
+          example: "annette.console"
+        - name: languageId
+          in: path
+          description: language id for which translation JSON should be returned
+          schema:
+            type: string
+          required: true
+          example: en
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  translationId: "annette.console"
+                  languageId: "en"
+                  json:
+                    annette:
+                      console:
+                        title: "Annette Console"
+                        welcome: "Welcome {username} to Annette Console"
+                  updatedAt: "2022-06-16T12:02:05.716892Z"
+                  updatedBy:
+                    principalType: "person"
+                    principalId: "P0001"
+        '404':
+          description: Translation not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.applicationService.translation.translationNotFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/application/getTranslationJsons/{languageId}:
+    post:
+      tags:
+        - Translation
+      summary: Get translation JSONs by language id and list of translation id
+      description: |
+        Get translation JSONs by language id and translation ids provided in request body. 
+        No authentication or permission required.
+      parameters:
+        - name: body
+          in: body
+          description: translation ids
+          schema:
+            type: array
+          required: true
+        - name: languageId
+          in: path
+          description: language id for which translation JSON should be returned
+          schema:
+            type: string
+          required: true
+          example: en
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              example: [ "annette.console", "annette.applications"]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                example:
+                  - translationId: "annette.console"
+                    languageId: "en"
+                    json:
+                      annette:
+                        console:
+                          title: "Annette Console"
+                          welcome: "Welcome {username} to Annette Console"
+                    updatedAt: "2022-06-16T12:02:05.716892Z"
+                    updatedBy:
+                      principalType: "person"
+                      principalId: "P0001"
+                  - translationId: "annette.applications"
+                    languageId: "en"
+                    json:
+                      annette:
+                        applications:
+                          title: "Applications"
+                          languageTitle: "Languages"
+                          translationTitle: "Translations"
+                          applicationTitle: "Applications"
+                    updatedAt: "2022-06-16T12:02:05.716892Z"
+                    updatedBy:
+                      principalType: "person"
+                      principalId: "P0001"
+
+  /api/annette/v1/application/createApplication:
+    post:
+      tags:
+        - Application
+      summary: Create application
+      description: Create application. Required permission `annette.application.application.maintain.all`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: "annette-console"
+                name: "Annette Console Application"
+                caption:
+                  type: text
+                  text: Annette Console
+                translations:
+                  - annette.console
+                  - annette.application
+                  - annette.org-structure
+                serverUrl: "https://annette.your-company.com"
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: "annette-console"
+                  name: "Annette Console Application"
+                  caption:
+                    type: text
+                    text: Annette Console
+                  translations:
+                    - annette.console
+                    - annette.application
+                    - annette.org-structure
+                  serverUrl: "https://annette.your-company.com"
+                  updatedAt: "2022-06-16T12:02:05.716892Z"
+                  updatedBy:
+                    principalType: "person"
+                    principalId: "P0001"
+        '400':
+          description: Application already exist
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.applicationService.application.applicationAlreadyExist"
+                  errorCode: 400
+                  params: { }
+  /api/annette/v1/application/updateApplication:
+    post:
+      tags:
+        - Application
+      summary: Update application
+      description: Update application. Required permission `annette.application.application.maintain.all`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: "annette-console"
+                name: "Annette Console Application"
+                caption:
+                  type: text
+                  text: Annette Console
+                translations:
+                  - annette.console
+                  - annette.application
+                  - annette.org-structure
+                serverUrl: "https://annette.your-company.com"
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: "annette-console"
+                  name: "Annette Console Application"
+                  caption:
+                    type: text
+                    text: Annette Console
+                  translations:
+                    - annette.console
+                    - annette.application
+                    - annette.org-structure
+                  serverUrl: "https://annette.your-company.com"
+                  updatedAt: "2022-06-16T12:02:05.716892Z"
+                  updatedBy:
+                    principalType: "person"
+                    principalId: "P0001"
+        '404':
+          description: Application not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.applicationService.application.applicationNotFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/application/deleteApplication:
+    post:
+      tags:
+        - Application
+      summary: Delete application
+      description: Delete application. Required permission `annette.application.application.maintain.all`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: "annette-console"
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+        '404':
+          description: Application not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.applicationService.application.applicationNotFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/application/getApplicationById/{id}/{fromReadSide}:
+    get:
+      tags:
+        - Application
+      summary: Get application by id
+      description: |
+        Get application by id.
+        
+        If fromReadSide == false 
+         * reads data from write side of CQRS data model and returns most recent application record
+         * requires permission `annette.application.application.maintain.all` to get data
+        
+        otherwise 
+         * it gets data from read side (usually it is faster than get data from write side) 
+         * no permissions required
+      parameters:
+        - name: id
+          in: path
+          description: application id
+          schema:
+            type: string
+          required: true
+          example: 'annette-console'
+        - name: fromReadSide
+          in: path
+          description: indicator to get data from read side
+          schema:
+            type: boolean
+          required: true
+          example: true
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: "annette-console"
+                  name: "Annette Console Application"
+                  caption:
+                    type: text
+                    text: Annette Console
+                  translations:
+                    - annette.console
+                    - annette.application
+                    - annette.org-structure
+                  serverUrl: "https://annette.your-company.com"
+                  updatedAt: "2022-06-16T12:02:05.716892Z"
+                  updatedBy:
+                    principalType: "person"
+                    principalId: "P0001"
+        '404':
+          description: Application not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.applicationService.application.applicationNotFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/application/getApplicationsById/{fromReadSide}:
+    post:
+      tags:
+        - Application
+      summary: Get applications by ids
+      description: |
+        Get applications by ids provided in request body
+        
+        If fromReadSide == false 
+         * reads data from write side of CQRS data model and returns most recent application records
+         * requires permission `annette.application.application.maintain.all` to get data
+        
+        otherwise 
+         * it gets data from read side (usually it is faster than get data from write side) 
+         * no permissions required
+      parameters:
+        - name: body
+          in: body
+          description: application ids
+          schema:
+            type: array
+          required: true
+        - name: fromReadSide
+          in: path
+          description: indicator to get data from read side
+          schema:
+            type: boolean
+          required: true
+          example: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              example: [ 'annette-console', 'finance']
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                example:
+                  - id: "annette-console"
+                    name: "Annette Console Application"
+                    caption:
+                      type: text
+                      text: Annette Console
+                    translations:
+                      - annette.console
+                      - annette.application
+                      - annette.org-structure
+                    serverUrl: "https://annette.your-company.com"
+                    updatedAt: "2022-06-16T12:02:05.716892Z"
+                    updatedBy:
+                      principalType: "person"
+                      principalId: "P0001"
+                  - id: "annette-console"
+                    name: "Annette Console Application"
+                    caption:
+                      type: text
+                      text: Annette Console
+                    translations:
+                      - finance
+                    serverUrl: "https://finance.your-company.com"
+                    updatedAt: "2022-06-16T12:02:05.716892Z"
+                    updatedBy:
+                      principalType: "person"
+                      principalId: "P0001"
+  /api/annette/v1/application/findApplications:
+    post:
+      tags:
+        - Application
+      summary: Find applications
+      description: |
+        Find applications using query provided in request body. Requires permission `annette.application.application.maintain.all`.
+      parameters:
+        - name: body
+          in: body
+          description: application query
+          schema:
+            type: object
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                offset: 0
+                size: 10
+                filter: console
+                sortBy:
+                  - field: name
+                    descending: false
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  total: 1
+                  hits:
+                    - id: "annette-console"
+                      score: 1.2039728164672852
+                      updatedAt: "2021-12-16T08:56:34.932113Z"
+  /api/annette/v1/application/getApplicationTranslations/{id}/{languageId}:
+    get:
+      tags:
+        - Application
+      summary: Get application translation JSON for specified language
+      description: |
+        Get translation JSONs assigned to application for specified language. No authentication or permission required.
+      parameters:
+        - name: id
+          in: path
+          description: application id
+          schema:
+            type: string
+          required: true
+          example: "annette-console"
+        - name: languageId
+          in: path
+          description: language id for which translation JSONs should be returned
+          schema:
+            type: string
+          required: true
+          example: en
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  annette:
+                    console:
+                      title: "Annette Console"
+                      welcome: "Welcome {username} to Annette Console"
+                  applications:
+                    title: "Applications"
+                    languageTitle: "Languages"
+                    translationTitle: "Translations"
+                    applicationTitle: "Applications"
+

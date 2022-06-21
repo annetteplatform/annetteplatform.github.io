@@ -1,0 +1,2220 @@
+openapi: 3.0.0
+info:
+  description: |
+    Organizational Structure API provides endpoints to maintain the following entities:
+    
+    * organizational structure 
+    * organizational role
+    * category
+  version: "0.5.0"
+  title: "Organizational Structure API"
+
+servers:
+  - url: http://localhost:9000
+    description: Localhost
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Organizational Structure
+    description: provides CRUD operations for organizational structures
+  - name: Organizational Role
+    description: provides CRUD operations for organizational roles
+  - name: Category
+    description: provides CRUD operations for categories of organizational items
+
+paths:
+
+  /api/annette/v1/orgStructure/createOrganization:
+    post:
+      tags:
+        - Organizational Structure
+      summary: Create organization
+      description: |
+        Create organization. Endpoint authorized if:
+        * user has permission `annette.orgStructure.hierarchy.maintain.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.maintain.org` for organization specified
+      parameters:
+        - name: withAttributes
+          in: query
+          description: list of attributes separated by comma or `all` to get all attributes
+          schema:
+            type: string
+          required: false
+          example: 'all'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: ANSOFT
+                orgId: ANSOFT
+                parentId: ROOT
+                name: Annette Software
+                categoryId: ORG
+                attributes: { }
+                source: SAP
+                externalId: SAP-00001
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: ANSOFT
+                  orgId: ANSOFT
+                  parentId: ROOT
+                  name: Annette Software
+                  itemType: unit
+                  children: [ ]
+                  level: 0
+                  categoryId: ORG
+                  source: SAP
+                  externalId: SAP-00001
+                  attributes:
+                  updatedAt: '2022-03-20T18:51:13.624899Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
+        '400':
+          description: Organization already exist
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.organizationAlreadyExist"
+                  errorCode: 400
+                  params:
+        '404':
+          description: Invalid composite Id
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.invalidCompositeId"
+                  errorCode: 404
+                  params:
+                    id: ABC:123
+  /api/annette/v1/orgStructure/createUnit:
+    post:
+      tags:
+        - Organizational Structure
+      summary: Create unit
+      description: |
+        Create unit. Endpoint authorized if:
+        * user has permission `annette.orgStructure.hierarchy.maintain.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.maintain.org` for organization specified
+      parameters:
+        - name: withAttributes
+          in: query
+          description: list of attributes separated by comma or `all` to get all attributes
+          schema:
+            type: string
+          required: false
+          example: 'all'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                parentId: ARETAIL
+                unitId: ARETAIL:FIN
+                name: Finance Department
+                categoryId: UNIT
+                source: SAP
+                externalId: SAP1234
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                example:
+                  - orgId: ARETAIL
+                    parentId: ARETAIL
+                    rootPath:
+                      - ARETAIL
+                      - ARETAIL:FIN
+                    id: ARETAIL:FIN
+                    name: Finance Department
+                    children: [ ]
+                    level: 1
+                    categoryId: UNIT
+                    source: SAP
+                    externalId: SAP1234
+                    attributes: { }
+                    updatedAt: '2022-06-20T17:28:08.103311Z'
+                    updatedBy:
+                      principalType: person
+                      principalId: P0001
+                    itemType: unit
+                  - orgId: ARETAIL
+                    parentId: ROOT
+                    rootPath:
+                      - ARETAIL
+                    id: ARETAIL
+                    name: ARetail
+                    children:
+                      - ARETAIL:FIN
+                    level: 0
+                    categoryId: ORG
+                    attributes: { }
+                    updatedAt: '2022-06-20T17:28:08.103311Z'
+                    updatedBy:
+                      principalType: person
+                      principalId: P0001
+                    itemType: unit
+        '400':
+          description: Already exist
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.alreadyExist"
+                  errorCode: 400
+                  params:
+        '404':
+          description: Organization not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.organizationNotFound"
+                  errorCode: 404
+                  params:
+                    orgId: ARETAIL
+  /api/annette/v1/orgStructure/createPosition:
+    post:
+      tags:
+        - Organizational Structure
+      summary: Create position
+      description: |
+        Create position. Endpoint authorized if:
+        * user has permission `annette.orgStructure.hierarchy.maintain.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.maintain.org` for organization specified
+      parameters:
+        - name: withAttributes
+          in: query
+          description: list of attributes separated by comma or `all` to get all attributes
+          schema:
+            type: string
+          required: false
+          example: 'all'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                parentId: ARETAIL
+                positionId: ARETAIL:CEO
+                name: CEO
+                limit: 1
+                categoryId: POSITION
+                source: SAP
+                externalId: SAP2000
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                example:
+                  - orgId: ARETAIL
+                    parentId: ARETAIL
+                    rootPath:
+                      - ARETAIL
+                      - ARETAIL:CEO
+                    id: ARETAIL:CEO
+                    name: CEO
+                    persons: [ ]
+                    limit: 1
+                    orgRoles: [ ]
+                    level: 1
+                    categoryId: POSITION
+                    source: SAP
+                    externalId: SAP2000
+                    attributes: { }
+                    updatedAt: '2022-06-20T18:01:53.421051Z'
+                    updatedBy:
+                      principalType: person
+                      principalId: P0001
+                    itemType: position
+                  - orgId: ARETAIL
+                    parentId: ROOT
+                    rootPath:
+                      - ARETAIL
+                    id: ARETAIL
+                    name: ARetail
+                    children:
+                      - ARETAIL:FIN
+                      - ARETAIL:CEO
+                    level: 0
+                    categoryId: ORG
+                    attributes: { }
+                    updatedAt: '2022-06-20T18:01:53.421051Z'
+                    updatedBy:
+                      principalType: person
+                      principalId: P0001
+                    itemType: unit
+        '400':
+          description: Already exist
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.alreadyExist"
+                  errorCode: 400
+                  params:
+        '404':
+          description: Organization not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.organizationNotFound"
+                  errorCode: 404
+                  params:
+                    orgId: ARETAIL
+  /api/annette/v1/orgStructure/updateName:
+    post:
+      tags:
+        - Organizational Structure
+      summary: Update name
+      description: |
+        Update name. Endpoint authorized if:
+        * user has permission `annette.orgStructure.hierarchy.maintain.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.maintain.org` for organization specified
+      parameters:
+        - name: withAttributes
+          in: query
+          description: list of attributes separated by comma or `all` to get all attributes
+          schema:
+            type: string
+          required: false
+          example: 'all'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                itemId: ARETAIL:CEO
+                name: CEO
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type:  object
+                example:
+                  orgId: ARETAIL
+                  parentId: ARETAIL
+                  rootPath:
+                    - ARETAIL
+                    - ARETAIL:CEO
+                  id: ARETAIL:CEO
+                  name: CEO
+                  persons: [ ]
+                  limit: 1
+                  orgRoles: [ ]
+                  level: 1
+                  categoryId: POSITION
+                  source: SAP
+                  externalId: SAP2000
+                  attributes: { }
+                  updatedAt: '2022-06-20T18:05:20.173871Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
+                  itemType: position
+        '404':
+          description: Organization not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.organizationNotFound"
+                  errorCode: 404
+                  params:
+                    orgId: ARETAIL
+  /api/annette/v1/orgStructure/assignCategory:
+    post:
+      tags:
+        - Organizational Structure
+      summary: Assign category
+      description: |
+        Assign category. Endpoint authorized if:
+        * user has permission `annette.orgStructure.hierarchy.maintain.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.maintain.org` for organization specified
+      parameters:
+        - name: withAttributes
+          in: query
+          description: list of attributes separated by comma or `all` to get all attributes
+          schema:
+            type: string
+          required: false
+          example: 'all'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                itemId: "ARETAIL:FIN"
+                categoryId: "UNIT"
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type:  object
+                example:
+                  orgId: ARETAIL
+                  parentId: ARETAIL
+                  rootPath:
+                    - ARETAIL
+                    - ARETAIL:FIN
+                  id: ARETAIL:FIN
+                  name: Finance Department
+                  children: [ ]
+                  level: 1
+                  categoryId: UNIT
+                  source: SAP
+                  externalId: SAP1234
+                  attributes: { }
+                  updatedAt: '2022-06-20T18:09:08.379888Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
+                  itemType: unit
+        '404':
+          description: Organization not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.organizationNotFound"
+                  errorCode: 404
+                  params:
+                    orgId: ARETAIL
+  /api/annette/v1/orgStructure/updateSource:
+    post:
+      tags:
+        - Organizational Structure
+      summary: Update source
+      description: |
+        Update source. Endpoint authorized if:
+        * user has permission `annette.orgStructure.hierarchy.maintain.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.maintain.org` for organization specified
+      parameters:
+        - name: withAttributes
+          in: query
+          description: list of attributes separated by comma or `all` to get all attributes
+          schema:
+            type: string
+          required: false
+          example: 'all'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                itemId: "ARETAIL:FIN"
+                source: SAP
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type:  object
+                example:
+                  orgId: ARETAIL
+                  parentId: ARETAIL
+                  rootPath:
+                    - ARETAIL
+                    - ARETAIL:FIN
+                  id: ARETAIL:FIN
+                  name: Finance Department
+                  children: [ ]
+                  level: 1
+                  categoryId: UNIT
+                  source: SAP
+                  externalId: SAP1234
+                  attributes: { }
+                  updatedAt: '2022-06-20T18:09:08.379888Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
+                  itemType: unit
+        '404':
+          description: Organization not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.organizationNotFound"
+                  errorCode: 404
+                  params:
+                    orgId: ARETAIL
+  /api/annette/v1/orgStructure/updateExternalId:
+    post:
+      tags:
+        - Organizational Structure
+      summary: Update external Id
+      description: |
+        Update external Id. Endpoint authorized if:
+        * user has permission `annette.orgStructure.hierarchy.maintain.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.maintain.org` for organization specified
+      parameters:
+        - name: withAttributes
+          in: query
+          description: list of attributes separated by comma or `all` to get all attributes
+          schema:
+            type: string
+          required: false
+          example: 'all'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                itemId: "ARETAIL:FIN"
+                externalId: SAP1234
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type:  object
+                example:
+                  orgId: ARETAIL
+                  parentId: ARETAIL
+                  rootPath:
+                    - ARETAIL
+                    - ARETAIL:FIN
+                  id: ARETAIL:FIN
+                  name: Finance Department
+                  children: [ ]
+                  level: 1
+                  categoryId: UNIT
+                  source: SAP
+                  externalId: SAP1234
+                  attributes: { }
+                  updatedAt: '2022-06-20T18:09:08.379888Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
+                  itemType: unit
+        '404':
+          description: Organization not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.organizationNotFound"
+                  errorCode: 404
+                  params:
+                    orgId: ARETAIL
+  /api/annette/v1/orgStructure/moveItem:
+    post:
+      tags:
+        - Organizational Structure
+      summary: Move item
+      description: |
+        Move item. Endpoint authorized if:
+        * user has permission `annette.orgStructure.hierarchy.maintain.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.maintain.org` for organization specified
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                itemId: "ARETAIL:CEO"
+                newParentId: "ARETAIL:FIN"
+                order: 0
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+        '404':
+          description: Organization not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.organizationNotFound"
+                  errorCode: 404
+                  params:
+                    orgId: ARETAIL
+  /api/annette/v1/orgStructure/updateOrgItemAttributes:
+    post:
+      tags:
+        - Organizational Structure
+      summary: Update org. item attributes
+      description: |
+        Update org. item attributes. Endpoint authorized if:
+        * user has permission `annette.orgStructure.hierarchy.maintain.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.maintain.org` for organization specified
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: ARETAIL:CEO
+                attributes:
+                  positionCategory: K5
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  positionCategory: "K5"
+        '404':
+          description: Organization not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.organizationNotFound"
+                  errorCode: 404
+                  params:
+                    orgId: ARETAIL
+  /api/annette/v1/orgStructure/assignChief:
+    post:
+      tags:
+        - Organizational Structure
+      summary: Assign chief to unit
+      description: |
+        Assign chief to unit. Endpoint authorized if:
+        * user has permission `annette.orgStructure.hierarchy.maintain.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.maintain.org` for organization specified
+      parameters:
+        - name: withAttributes
+          in: query
+          description: list of attributes separated by comma or `all` to get all attributes
+          schema:
+            type: string
+          required: false
+          example: 'all'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                chiefId: "ARETAIL:CEO"
+                unitId: "ARETAIL"
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type:  object
+                example:
+                  orgId: ARETAIL
+                  parentId: ROOT
+                  rootPath:
+                    - ARETAIL
+                  id: ARETAIL
+                  name: ARetail
+                  children:
+                    - ARETAIL:CEO
+                    - ARETAIL:FIN
+                  chief: ARETAIL:CEO
+                  level: 0
+                  categoryId: ORG
+                  attributes: { }
+                  updatedAt: '2022-06-20T18:30:10.043086Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
+                  itemType: unit
+        '404':
+          description: Organization not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.organizationNotFound"
+                  errorCode: 404
+                  params:
+                    orgId: ARETAIL
+  /api/annette/v1/orgStructure/unassignChief:
+    post:
+      tags:
+        - Organizational Structure
+      summary: Unassign chief to unit
+      description: |
+        Unassign chief to unit. Endpoint authorized if:
+        * user has permission `annette.orgStructure.hierarchy.maintain.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.maintain.org` for organization specified
+      parameters:
+        - name: withAttributes
+          in: query
+          description: list of attributes separated by comma or `all` to get all attributes
+          schema:
+            type: string
+          required: false
+          example: 'all'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                unitId: "ARETAIL"
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type:  object
+                example:
+                  orgId: ARETAIL
+                  parentId: ROOT
+                  rootPath:
+                    - ARETAIL
+                  id: ARETAIL
+                  name: ARetail
+                  children:
+                    - ARETAIL:CEO
+                    - ARETAIL:FIN
+                  level: 0
+                  categoryId: ORG
+                  attributes: { }
+                  updatedAt: '2022-06-20T18:32:00.159272Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
+                  itemType: unit
+        '404':
+          description: Organization not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.organizationNotFound"
+                  errorCode: 404
+                  params:
+                    orgId: ARETAIL
+  /api/annette/v1/orgStructure/changePositionLimit:
+    post:
+      tags:
+        - Organizational Structure
+      summary: Change position limit
+      description: |
+        Change limit of persons that could be assigned to position. Endpoint authorized if:
+        * user has permission `annette.orgStructure.hierarchy.maintain.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.maintain.org` for organization specified
+      parameters:
+        - name: withAttributes
+          in: query
+          description: list of attributes separated by comma or `all` to get all attributes
+          schema:
+            type: string
+          required: false
+          example: 'all'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                positionId: "ARETAIL:CEO"
+                limit: 1
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type:  object
+                example:
+                  orgId: ARETAIL
+                  parentId: ARETAIL
+                  rootPath:
+                    - ARETAIL
+                    - ARETAIL:CEO
+                  id: ARETAIL:CEO
+                  name: CEO
+                  persons: [ ]
+                  limit: 1
+                  orgRoles: [ ]
+                  level: 1
+                  categoryId: POSITION
+                  source: SAP
+                  externalId: SAP2000
+                  attributes: { }
+                  updatedAt: '2022-06-20T18:36:39.657883Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
+                  itemType: position
+        '404':
+          description: Organization not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.organizationNotFound"
+                  errorCode: 404
+                  params:
+                    orgId: ARETAIL
+  /api/annette/v1/orgStructure/assignPerson:
+    post:
+      tags:
+        - Organizational Structure
+      summary: Assign person to position
+      description: |
+        Assign person to position. Endpoint authorized if:
+        * user has permission `annette.orgStructure.hierarchy.maintain.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.maintain.org` for organization specified
+      parameters:
+        - name: withAttributes
+          in: query
+          description: list of attributes separated by comma or `all` to get all attributes
+          schema:
+            type: string
+          required: false
+          example: 'all'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                personId: "P0014"
+                positionId: "ARETAIL:CEO"
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type:  object
+                example:
+                  orgId: ARETAIL
+                  parentId: ARETAIL
+                  rootPath:
+                    - ARETAIL
+                    - ARETAIL:CEO
+                  id: ARETAIL:CEO
+                  name: CEO
+                  persons:
+                    - P0014
+                  limit: 1
+                  orgRoles: [ ]
+                  level: 1
+                  categoryId: POSITION
+                  source: SAP
+                  externalId: SAP2000
+                  attributes: { }
+                  updatedAt: '2022-06-20T18:38:46.125965Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
+                  itemType: position
+        '404':
+          description: Organization not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.organizationNotFound"
+                  errorCode: 404
+                  params:
+                    orgId: ARETAIL
+  /api/annette/v1/orgStructure/unassignPerson:
+    post:
+      tags:
+        - Organizational Structure
+      summary: Unassign person from position
+      description: |
+        Unassign person from position. Endpoint authorized if:
+        * user has permission `annette.orgStructure.hierarchy.maintain.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.maintain.org` for organization specified
+      parameters:
+        - name: withAttributes
+          in: query
+          description: list of attributes separated by comma or `all` to get all attributes
+          schema:
+            type: string
+          required: false
+          example: 'all'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                personId: "P0014"
+                positionId: "ARETAIL:CEO"
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type:  object
+                example:
+                  orgId: ARETAIL
+                  parentId: ARETAIL
+                  rootPath:
+                    - ARETAIL
+                    - ARETAIL:CEO
+                  id: ARETAIL:CEO
+                  name: CEO
+                  persons: [ ]
+                  limit: 1
+                  orgRoles: [ ]
+                  level: 1
+                  categoryId: POSITION
+                  source: SAP
+                  externalId: SAP2000
+                  attributes: { }
+                  updatedAt: '2022-06-20T18:40:54.756233Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
+                  itemType: position
+        '404':
+          description: Organization not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.organizationNotFound"
+                  errorCode: 404
+                  params:
+                    orgId: ARETAIL
+
+  /api/annette/v1/orgStructure/assignOrgRole:
+    post:
+      tags:
+        - Organizational Structure
+      summary: Assign org. role to position
+      description: |
+        Assign org. role to position. Endpoint authorized if:
+        * user has permission `annette.orgStructure.hierarchy.maintain.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.maintain.org` for organization specified
+      parameters:
+        - name: withAttributes
+          in: query
+          description: list of attributes separated by comma or `all` to get all attributes
+          schema:
+            type: string
+          required: false
+          example: 'all'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                orgRoleId: "STORE-MANAGER"
+                positionId: "ARETAIL:CEO"
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type:  object
+                example:
+                  orgId: ARETAIL
+                  parentId: ARETAIL
+                  rootPath:
+                    - ARETAIL
+                    - ARETAIL:CEO
+                  id: ARETAIL:CEO
+                  name: CEO
+                  persons: [ ]
+                  limit: 1
+                  orgRoles:
+                    - STORE-MANAGER
+                  level: 1
+                  categoryId: POSITION
+                  source: SAP
+                  externalId: SAP2000
+                  attributes: { }
+                  updatedAt: '2022-06-20T18:43:11.719318Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
+                  itemType: position
+        '404':
+          description: Organization not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.organizationNotFound"
+                  errorCode: 404
+                  params:
+                    orgId: ARETAIL
+  /api/annette/v1/orgStructure/unassignOrgRole:
+    post:
+      tags:
+        - Organizational Structure
+      summary: Unassign org. role from position
+      description: |
+        Unassign org. role from position. Endpoint authorized if:
+        * user has permission `annette.orgStructure.hierarchy.maintain.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.maintain.org` for organization specified
+      parameters:
+        - name: withAttributes
+          in: query
+          description: list of attributes separated by comma or `all` to get all attributes
+          schema:
+            type: string
+          required: false
+          example: 'all'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                orgRoleId: "STORE-MANAGER"
+                positionId: "ARETAIL:CEO"
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type:  object
+                example:
+                  orgId: ARETAIL
+                  parentId: ARETAIL
+                  rootPath:
+                    - ARETAIL
+                    - ARETAIL:CEO
+                  id: ARETAIL:CEO
+                  name: CEO
+                  persons: [ ]
+                  limit: 1
+                  orgRoles: [ ]
+                  level: 1
+                  categoryId: POSITION
+                  source: SAP
+                  externalId: SAP2000
+                  attributes: { }
+                  updatedAt: '2022-06-20T18:44:28.53213Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
+                  itemType: position
+        '404':
+          description: Organization not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.organizationNotFound"
+                  errorCode: 404
+                  params:
+                    orgId: ARETAIL
+  /api/annette/v1/orgStructure/deleteOrgItem:
+    post:
+      tags:
+        - Organizational Structure
+      summary: Delete org. item
+      description: |
+        Delete org. item. Endpoint authorized if:
+        * user has permission `annette.orgStructure.hierarchy.maintain.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.maintain.org` for organization specified
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                itemId: "ARETAIL:CEO"
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+        '404':
+          description: Organization not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.organizationNotFound"
+                  errorCode: 404
+                  params:
+                    orgId: ARETAIL
+
+  /api/annette/v1/orgStructure/getOrganizationById/{orgId}:
+    get:
+      tags:
+        - Organizational Structure
+      summary: Get organization data
+      description: |
+        Get organization data. Endpoint authorized if:
+        
+        * user has permission `annette.orgStructure.hierarchy.view.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.view.org` for organization specified 
+        * user has permission `annette.orgStructure.hierarchy.maintain.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.maintain.org` for organization specified 
+
+      parameters:
+        - name: orgId
+          in: path
+          description: organization id
+          schema:
+            type: string
+          required: true
+          example: 'ARETAIL'
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  orgId: ARETAIL
+                  units:
+                    ARETAIL:
+                      id: ARETAIL
+                      parentId: ROOT
+                      name: ARetail
+                      children:
+                        - ARETAIL:FIN
+                        - ARETAIL:CEO
+                      categoryId: ORG
+                      attributes: { }
+                      updatedAt: '2022-06-21T10:44:33.756683Z'
+                      updatedBy:
+                        principalType: person
+                        principalId: P0001
+                    ARETAIL:FIN:
+                      id: ARETAIL:FIN
+                      parentId: ARETAIL
+                      name: Finance Department
+                      children: [ ]
+                      categoryId: DISPOSED-UNIT
+                      source: SAP
+                      externalId: SAP1234
+                      attributes: { }
+                      updatedAt: '2022-06-20T18:29:41.897306Z'
+                      updatedBy:
+                        principalType: person
+                        principalId: P0001
+                  positions:
+                    ARETAIL:CEO:
+                      id: ARETAIL:CEO
+                      parentId: ARETAIL
+                      name: CEO
+                      limit: 1
+                      persons:
+                        - P0009
+                      orgRoles:
+                        - STORE-MANAGER
+                      categoryId: POSITION
+                      source: SAP
+                      externalId: SAP98765
+                      attributes:
+                        positionCategory: K5
+                      updatedAt: '2022-06-21T10:44:51.345579Z'
+                      updatedBy:
+                        principalType: person
+                        principalId: P0001
+                  chiefAssignments: { }
+                  personAssignments:
+                    P0009:
+                      - ARETAIL:CEO
+                  updatedAt: '2022-06-21T10:44:51.345579Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
+        '404':
+          description: Organization not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.organizationNotFound"
+                  errorCode: 404
+                  params:
+                    orgId: ARETAIL
+  /api/annette/v1/orgStructure/getOrganizationTree/{itemId}:
+    get:
+      tags:
+        - Organizational Structure
+      summary: Get tree representation of organization data
+      description: |
+        Get tree representation of organization data started with org. item id specified. Endpoint authorized if:
+        
+        * user has permission `annette.orgStructure.hierarchy.view.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.view.org` for organization specified 
+        * user has permission `annette.orgStructure.hierarchy.maintain.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.maintain.org` for organization specified 
+
+      parameters:
+        - name: itemId
+          in: path
+          description: org. item id
+          schema:
+            type: string
+          required: true
+          example: 'ARETAIL'
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  orgId: ARETAIL
+                  root:
+                    id: ARETAIL
+                    children:
+                      - id: ARETAIL:FIN
+                        children: [ ]
+                        categoryId: UNIT
+                        source: SAP
+                        externalId: SAP1234
+                        type: UnitTreeItem
+                      - id: ARETAIL:CEO
+                        categoryId: POSITION
+                        persons:
+                          - P0009
+                        limit: 1
+                        orgRoles:
+                          - STORE-MANAGER
+                        source: SAP
+                        externalId: SAP98765
+                        type: PositionTreeItem
+                    categoryId: ORG
+                    type: UnitTreeItem
+        '404':
+          description: Organization not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.organizationNotFound"
+                  errorCode: 404
+                  params:
+                    orgId: ARETAIL
+  /api/annette/v1/orgStructure/getOrgItemById/{id}/{fromReadSide}:
+    get:
+      tags:
+        - Organizational Structure
+      summary: Get org. item by id
+      description: |
+        Get org. item by id. Endpoint authorized if:
+        
+        * user has permission `annette.orgStructure.hierarchy.view.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.view.org` for organization specified 
+        * user has permission `annette.orgStructure.hierarchy.maintain.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.maintain.org` for organization specified
+      parameters:
+        - name: id
+          in: path
+          description: org. item id
+          schema:
+            type: string
+          required: true
+          example: 'ARETAIL:CEO'
+        - name: withAttributes
+          in: query
+          description: list of attributes separated by comma or `all` to get all attributes
+          schema:
+            type: string
+          required: false
+          example: 'all'
+        - name: fromReadSide
+          in: path
+          description: indicator to get data from read side
+          schema:
+            type: boolean
+          required: true
+          example: true
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  orgId: ARETAIL
+                  parentId: ARETAIL
+                  rootPath:
+                    - ARETAIL
+                    - ARETAIL:CEO
+                  id: ARETAIL:CEO
+                  name: CEO
+                  persons:
+                    - P0009
+                  limit: 1
+                  orgRoles:
+                    - STORE-MANAGER
+                  level: 1
+                  categoryId: POSITION
+                  source: SAP
+                  externalId: SAP98765
+                  attributes:
+                    positionCategory: K5
+                  updatedAt: '2022-06-21T10:44:51.345Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
+                  itemType: position
+        '404':
+          description: Organization not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.organizationNotFound"
+                  errorCode: 404
+                  params:
+                    orgId: ARETAIL
+  /api/annette/v1/orgStructure/getOrgItemsById/{fromReadSide}:
+    post:
+      tags:
+        - Organizational Structure
+      summary: Get org. items by ids
+      description: |
+        Get org. items by ids provided in request body. Endpoint authorized if:
+        
+        * user has permission `annette.orgStructure.hierarchy.view.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.view.org` for organization specified 
+        * user has permission `annette.orgStructure.hierarchy.maintain.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.maintain.org` for organization specified
+      parameters:
+        - name: withAttributes
+          in: query
+          description: list of attributes separated by comma or `all` to get all attributes
+          schema:
+            type: string
+          required: false
+          example: 'all'
+        - name: fromReadSide
+          in: path
+          description: indicator to get data from read side
+          schema:
+            type: boolean
+          required: true
+          example: true
+      requestBody:
+        description: person ids
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+              example: [ 'ARETAIL:CEO', 'ARETAIL:FIN']
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                example:
+                  - orgId: ARETAIL
+                    parentId: ARETAIL
+                    rootPath:
+                      - ARETAIL
+                      - ARETAIL:CEO
+                    id: ARETAIL:CEO
+                    name: CEO
+                    persons:
+                      - P0009
+                    limit: 1
+                    orgRoles:
+                      - STORE-MANAGER
+                    level: 1
+                    categoryId: POSITION
+                    source: SAP
+                    externalId: SAP98765
+                    attributes:
+                      positionCategory: K5
+                    updatedAt: '2022-06-21T10:44:51.345579Z'
+                    updatedBy:
+                      principalType: person
+                      principalId: P0001
+                    itemType: position
+                  - orgId: ARETAIL
+                    parentId: ARETAIL
+                    rootPath:
+                      - ARETAIL
+                      - ARETAIL:FIN
+                    id: ARETAIL:FIN
+                    name: Finance Department
+                    children: [ ]
+                    level: 1
+                    categoryId: UNIT
+                    source: SAP
+                    externalId: SAP1234
+                    attributes: { }
+                    updatedAt: '2022-06-21T10:48:08.976276Z'
+                    updatedBy:
+                      principalType: person
+                      principalId: P0001
+                    itemType: unit
+  /api/annette/v1/orgStructure/findOrgItems:
+    post:
+      tags:
+        - Organizational Structure
+      summary: Find org. items
+      description: |
+        Find org. items using query provided in request body. 
+        Requires permission `annette.orgStructure.hierarchy.view.all` or `annette.orgStructure.hierarchy.maintain.all`.
+      requestBody:
+        description: org. items query
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                offset: 0
+                size: 10
+                name: CEO
+                orgUnits:
+                persons:
+                orgRoles:
+                fromLevel:
+                toLevel:
+                itemTypes:
+                organizations: ["ARETAIL"]
+                parents:
+                chiefs:
+                categories:
+                sources:
+                externalIds:
+                query:
+                sortBy:
+                  - field: name
+                    descending: false
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  total: 1
+                  hits:
+                    - id: ARETAIL:CEO
+                      score: 13.416172981262207
+                      updatedAt: '2022-06-21T10:44:51.345579Z'
+
+  /api/annette/v1/orgStructure/getOrgItemMetadata:
+    get:
+      tags:
+        - Organizational Structure
+      summary: Get org. item metadata
+      description: |
+        Get org. item metadata that describes attributes. Requires permission `annette.orgStructure.hierarchy.view.all` or `annette.orgStructure.hierarchy.maintain.all`.
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  positionCategory:
+                    name: positionCategory
+                    subtype: position-category
+                    allowedValues:
+                      - K1
+                      - K2
+                      - K3
+                      - K4
+                      - K5
+                    caption:
+                      text: Position Category
+                      type: text
+                    index: positionCategory
+                    readSidePersistence: false
+                    type: string
+                  storeId:
+                    name: storeId
+                    subtype: storeId
+                    caption:
+                      text: Store Id
+                      type: text
+                    index: storeId
+                    readSidePersistence: false
+                    type: string
+                  description:
+                    name: description
+                    caption:
+                      text: Description
+                      type: text
+                    readSidePersistence: true
+                    type: string
+  /api/annette/v1/orgStructure/getOrgItemAttributes/{id}/{fromReadSide}:
+    get:
+      tags:
+        - Organizational Structure
+      summary: Get org. item attributes
+      description: |
+        Get org. item  attributes. Endpoint authorized if:
+        
+        * user has permission `annette.orgStructure.hierarchy.view.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.view.org` for organization specified 
+        * user has permission `annette.orgStructure.hierarchy.maintain.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.maintain.org` for organization specified 
+
+      parameters:
+        - name: id
+          in: path
+          description: org. item id
+          schema:
+            type: string
+          required: true
+          example: 'ARETAIL:CEO'
+        - name: withAttributes
+          in: query
+          description: list of attributes separated by comma or `all` to get all attributes
+          schema:
+            type: string
+          required: false
+          example: 'all'
+        - name: fromReadSide
+          in: path
+          description: indicator to get data from read side
+          schema:
+            type: boolean
+          required: true
+          example: true
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  positionCategory: 'K5'
+        '404':
+          description: Organization not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.organizationNotFound"
+                  errorCode: 404
+                  params:
+                    orgId: ARETAIL
+  /api/annette/v1/orgStructure/getOrgItemsAttributes/{fromReadSide}:
+    post:
+      tags:
+        - Organizational Structure
+      summary: Get org. items attributes by ids
+      description: |
+        Get org. items attributes by ids provided in request body. Endpoint authorized if:
+        
+        * user has permission `annette.orgStructure.hierarchy.view.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.view.org` for organization specified 
+        * user has permission `annette.orgStructure.hierarchy.maintain.all` OR 
+        * user has permission `annette.orgStructure.hierarchy.maintain.org` for organization specified 
+
+      parameters:
+        - name: withAttributes
+          in: query
+          description: list of attributes separated by comma or `all` to get all attributes
+          schema:
+            type: string
+          required: false
+          example: 'all'
+        - name: fromReadSide
+          in: path
+          description: indicator to get data from read side
+          schema:
+            type: boolean
+          required: true
+          example: true
+      requestBody:
+        description: org. item ids
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+              example: [ 'ARETAIL:CEO', 'ARETAIL:CFO']
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  'ARETAIL:CFO':
+                    positionCategory: 'K4'
+                  'ARETAIL:CEO':
+                    positionCategory: 'K5'
+        '404':
+          description: Organization not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.hierarchy.organizationNotFound"
+                  errorCode: 404
+                  params:
+                    orgId: ARETAIL
+
+
+  /api/annette/v1/orgStructure/createOrgRole :
+    post:
+      tags:
+        - Organizational Role
+      summary: Create organizational role
+      description: Create organizational role. Required permission `annette.orgStructure.orgRole.maintain.all`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: STORE-MANAGER
+                name: Store Manager
+                description: ''
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: STORE-MANAGER
+                  name: Store Manager
+                  description: ''
+                  updatedAt: '2022-03-20T18:51:57.091751Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
+        '400':
+          description: Organizational role already exist
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.orgRole.alreadyExist"
+                  errorCode: 400
+                  params: { }
+  /api/annette/v1/orgStructure/updateOrgRole:
+    post:
+      tags:
+        - Organizational Role
+      summary: Update organizational role
+      description: Update organizational role. Required permission `annette.orgStructure.orgRole.maintain.all`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: STORE-MANAGER
+                name: Store Manager
+                description: ''
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: STORE-MANAGER
+                  name: Store Manager
+                  description: ''
+                  updatedAt: '2022-03-20T18:51:57.091751Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
+        '404':
+          description: Organizational role not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.orgRole.notFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/orgStructure/deleteOrgRole:
+    post:
+      tags:
+        - Organizational Role
+      summary: Delete organizational role
+      description: Delete organizational role. Required permission `annette.orgStructure.orgRole.maintain.all`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: STORE-MANAGER
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+        '404':
+          description: Organizational role not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.orgRole.notFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/orgStructure/getOrgRoleById/{id}/{fromReadSide}:
+    get:
+      tags:
+        - Organizational Role
+      summary: Get organizational role by id
+      description: |
+        Get organizational role by id. 
+        
+        If fromReadSide == false:
+        * it reads data from write side of CQRS data model and returns most recent organizational role records
+        * requires permission `annette.orgStructure.orgRole.maintain.all`
+        
+        otherwise 
+        * it gets data from read side (usually it is faster than get data from write side)
+        * requires permission `annette.orgStructure.orgRole.maintain.all` or `annette.orgStructure.orgRole.view.all`
+      parameters:
+        - name: id
+          in: path
+          description: organizational role id
+          schema:
+            type: string
+          required: true
+          example: STORE-MANAGER
+        - name: fromReadSide
+          in: path
+          description: indicator to get data from read side
+          schema:
+            type: boolean
+          required: true
+          example: true
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: STORE-MANAGER
+                  name: Store Manager
+                  description: ''
+                  updatedAt: '2022-03-20T18:51:57.091751Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
+        '404':
+          description: Organizational role not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.orgRole.notFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/orgStructure/getOrgRolesById/{fromReadSide}:
+    post:
+      tags:
+        - Organizational Role
+      summary: Get organizational roles by ids
+      description: |
+        Get organizational roles by ids provided in request body.
+        
+        If fromReadSide == false:
+        * it reads data from write side of CQRS data model and returns most recent organizational role records
+        * requires permission `annette.orgStructure.orgRole.maintain.all`
+        
+        otherwise 
+        * it gets data from read side (usually it is faster than get data from write side)
+        * requires permission `annette.orgStructure.orgRole.maintain.all` or `annette.orgStructure.orgRole.view.all`
+      parameters:
+        - name: fromReadSide
+          in: path
+          description: indicator to get data from read side
+          schema:
+            type: boolean
+          required: true
+          example: true
+      requestBody:
+        description: organizational role ids
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+              example: [ "STORE-MANAGER", "SALESMAN"]
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                example:
+                  - id: STORE-MANAGER
+                    name: Store Manager
+                    description: ''
+                    updatedAt: '2022-03-20T18:51:57.091751Z'
+                    updatedBy:
+                      principalType: person
+                      principalId: P0001
+                  - id: SALESMAN
+                    name: Salesman
+                    description: ''
+                    updatedAt: '2022-03-20T18:51:56.945287Z'
+                    updatedBy:
+                      principalType: person
+                      principalId: P0001
+  /api/annette/v1/orgStructure/findOrgRoles:
+    post:
+      tags:
+        - Organizational Role
+      summary: Find organizational roles
+      description: |
+        Find organizational roles using query provided in request body. 
+        Requires permission `annette.orgStructure.orgRole.maintain.all` or `annette.orgStructure.orgRole.view.all`.
+      requestBody:
+        description: organizational role query
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                offset: 0
+                size: 10
+                filter: manager
+                sortBy:
+                  - field: name
+                    descending: false
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  total: 1
+                  hits:
+                    - id: STORE-MANAGER
+                      score: 1.2039728164672852
+                      updatedAt: "2021-12-16T08:56:34.932113Z"
+
+
+  /api/annette/v1/orgStructure/createCategory:
+    post:
+      tags:
+        - Category
+      summary: Create category
+      description: Create category. Required permission `annette.orgStructure.category.maintain.all`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: ORG
+                name: Organization
+                forOrganization: true
+                forUnit: false
+                forPosition: false
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: ORG
+                  name: Organization
+                  forOrganization: true
+                  forUnit: false
+                  forPosition: false
+                  updatedAt: '2022-03-20T18:51:54.545335Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
+        '400':
+          description: Category already exist
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.category.alreadyExist"
+                  errorCode: 400
+                  params: { }
+  /api/annette/v1/orgStructure/updateCategory:
+    post:
+      tags:
+        - Category
+      summary: Update category
+      description: Update category. Required permission `annette.orgStructure.category.maintain.all`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: ORG
+                name: Organization
+                forOrganization: true
+                forUnit: false
+                forPosition: false
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: ORG
+                  name: Organization
+                  forOrganization: true
+                  forUnit: false
+                  forPosition: false
+                  updatedAt: '2022-03-20T18:51:54.545335Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.category.notFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/orgStructure/deleteCategory:
+    post:
+      tags:
+        - Category
+      summary: Delete category
+      description: Delete category. Required permission `annette.orgStructure.category.maintain.all`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: ORG
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.category.notFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/orgStructure/getCategoryById/{id}/{fromReadSide}:
+    get:
+      tags:
+        - Category
+      summary: Get category by id
+      description: |
+        Get category by id. 
+        
+        If fromReadSide == false:
+        * it reads data from write side of CQRS data model and returns most recent category records
+        * requires permission `annette.orgStructure.category.maintain.all`
+        
+        otherwise 
+        * it gets data from read side (usually it is faster than get data from write side)
+        * requires permission `annette.orgStructure.category.maintain.all` or `annette.orgStructure.category.view.all`
+      parameters:
+        - name: id
+          in: path
+          description: category id
+          schema:
+            type: string
+          required: true
+          example: ORG
+        - name: fromReadSide
+          in: path
+          description: indicator to get data from read side
+          schema:
+            type: boolean
+          required: true
+          example: true
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: ORG
+                  name: Organization
+                  forOrganization: true
+                  forUnit: false
+                  forPosition: false
+                  updatedAt: '2022-03-20T18:51:54.545335Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.orgStructureService.category.notFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/orgStructure/getCategoriesById/{fromReadSide}:
+    post:
+      tags:
+        - Category
+      summary: Get categories by ids
+      description: |
+        Get categories by ids provided in request body.
+        
+        If fromReadSide == false:
+        * it reads data from write side of CQRS data model and returns most recent category records
+        * requires permission `annette.orgStructure.category.maintain.all`
+        
+        otherwise 
+        * it gets data from read side (usually it is faster than get data from write side)
+        * requires permission `annette.orgStructure.category.maintain.all` or `annette.orgStructure.category.view.all`
+      parameters:
+        - name: fromReadSide
+          in: path
+          description: indicator to get data from read side
+          schema:
+            type: boolean
+          required: true
+          example: true
+      requestBody:
+        description: category ids
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+              example: [ "ORG", "POSITION"]
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                example:
+                  - id: ORG
+                    name: Organization
+                    forOrganization: true
+                    forUnit: false
+                    forPosition: false
+                    updatedAt: '2022-03-20T18:51:54.545335Z'
+                    updatedBy:
+                      principalType: person
+                      principalId: P0001
+                  - id: POSITION
+                    name: Position
+                    forOrganization: false
+                    forUnit: false
+                    forPosition: true
+                    updatedAt: '2022-03-20T18:51:56.782982Z'
+                    updatedBy:
+                      principalType: person
+                      principalId: P0001
+  /api/annette/v1/orgStructure/findCategories:
+    post:
+      tags:
+        - Category
+      summary: Find categories
+      description: |
+        Find categories using query provided in request body. 
+        Requires permission `annette.orgStructure.category.maintain.all` or `annette.orgStructure.category.view.all`.
+      requestBody:
+        description: category query
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                offset: 0
+                size: 10
+                filter: org
+                sortBy:
+                  - field: name
+                    descending: false
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  total: 1
+                  hits:
+                    - id: ORG
+                      score: 1.2039728164672852
+                      updatedAt: "2021-12-16T08:56:34.932113Z"

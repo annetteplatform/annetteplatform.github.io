@@ -1,0 +1,951 @@
+openapi: 3.0.0
+info:
+  description: |
+    Person API provides endpoints to maintain the following entities:
+    
+    * person 
+    * person category
+  version: "0.5.0"
+  title: "Person API"
+
+servers:
+  - url: http://localhost:9000
+    description: Localhost
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Person
+    description: provides CRUD operations for person used in platform
+  - name: Person category
+    description: provides CRUD operations for person categories
+
+paths:
+
+  /api/annette/v1/person/createPerson:
+    post:
+      tags:
+        - Person
+      summary: Create person
+      description: |
+        Create person. Endpoint authorized if:
+        * user has permission `annette.person.person.maintain.all` OR 
+        * user has permission `annette.person.person.maintain.subordinate` and assigned as chief of unit person assigned to OR
+        * user has permission `annette.person.person.maintain.orgUnit` for unit person assigned to
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: P0001
+                lastname: Fisher
+                firstname: Kristina
+                categoryId: PERSON
+                phone: "(754)-566-6120"
+                email: kristina.fisher@example.com
+                source: SAP
+                externalId: SAP-P0001
+                attributes:
+                  salary: '110000'
+                  birthDate: '1977-03-30'
+                  isMarried: 'true'
+                  gender: F
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: P0001
+                  lastname: Fisher
+                  firstname: Kristina
+                  categoryId: PERSON
+                  phone: "(754)-566-6120"
+                  email: kristina.fisher@example.com
+                  source: SAP
+                  externalId: SAP-P0001
+                  attributes:
+                    salary: '110000'
+                    birthDate: '1977-03-30'
+                    isMarried: 'true'
+                    gender: F
+                  updatedAt: '2022-03-20T18:51:13.624899Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
+        '400':
+          description: Person already exist
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.personService.person.alreadyExist"
+                  errorCode: 400
+                  params: { }
+  /api/annette/v1/person/updatePerson:
+    post:
+      tags:
+        - Person
+      summary: Update person
+      description: |
+        Update person. Endpoint authorized if:
+         * user has permission `annette.person.person.maintain.all` OR
+         * user has permission `annette.person.person.maintain.subordinate` and assigned as chief of unit person assigned to OR
+         * user has permission `annette.person.person.maintain.orgUnit` for unit person assigned to
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: P0001
+                lastname: Fisher
+                firstname: Kristina
+                categoryId: PERSON
+                phone: "(754)-566-6120"
+                email: kristina.fisher@example.com
+                source: SAP
+                externalId: SAP-P0001
+                attributes:
+                  salary: '110000'
+                  birthDate: '1977-03-30'
+                  isMarried: 'true'
+                  gender: F
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: P0001
+                  lastname: Fisher
+                  firstname: Kristina
+                  categoryId: PERSON
+                  phone: "(754)-566-6120"
+                  email: kristina.fisher@example.com
+                  source: SAP
+                  externalId: SAP-P0001
+                  attributes:
+                    salary: '110000'
+                    birthDate: '1977-03-30'
+                    isMarried: 'true'
+                    gender: F
+                  updatedAt: "2022-06-16T12:02:05.716892Z"
+                  updatedBy:
+                    principalType: "person"
+                    principalId: "P0001"
+        '404':
+          description: Person not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.personService.person.notFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/person/updatePersonAttributes:
+    post:
+      tags:
+        - Person
+      summary: Update person attributes
+      description: |
+        Update person attributes. Endpoint authorized if:
+         * user has permission `annette.person.person.maintain.all` OR
+         * user has permission `annette.person.person.maintain.subordinate` and assigned as chief of unit person assigned to OR
+         * user has permission `annette.person.person.maintain.orgUnit` for unit person assigned to
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: P0001
+                attributes:
+                  salary: '110000'
+                  birthDate: '1977-03-30'
+                  isMarried: 'true'
+                  gender: F
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: P0001
+                  lastname: Fisher
+                  firstname: Kristina
+                  categoryId: PERSON
+                  phone: "(754)-566-6120"
+                  email: kristina.fisher@example.com
+                  source: SAP
+                  externalId: SAP-P0001
+                  attributes:
+                    salary: '110000'
+                    birthDate: '1977-03-30'
+                    isMarried: 'true'
+                    gender: F
+                  updatedAt: "2022-06-16T12:02:05.716892Z"
+                  updatedBy:
+                    principalType: "person"
+                    principalId: "P0001"
+        '404':
+          description: Person not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.personService.person.notFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/person/deletePerson:
+    post:
+      tags:
+        - Person
+      summary: Delete person
+      description: |
+        Delete person. Endpoint authorized if:
+         * user has permission `annette.person.person.maintain.all` OR
+         * user has permission `annette.person.person.maintain.subordinate` and assigned as chief of unit person assigned to OR
+         * user has permission `annette.person.person.maintain.orgUnit` for unit person assigned to
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: "P-0001"
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+        '404':
+          description: Person not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.personService.person.notFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/person/getPersonById/{id}/{fromReadSide}:
+    get:
+      tags:
+        - Person
+      summary: Get person by id
+      description: |
+        Get person by id.
+        
+        If fromReadSide == false 
+         * reads data from write side of CQRS data model and returns most recent person record
+         * endpoint authorized if:
+           * user has permission `annette.person.person.maintain.all` OR
+           * user has permission `annette.person.person.maintain.subordinate` and assigned as chief of unit person assigned to OR
+           * user has permission `annette.person.person.maintain.orgUnit` for unit person assigned to
+        
+        otherwise 
+         * it gets data from read side (usually it is faster than get data from write side) 
+         * endpoint authorized if:
+           * user has permission `annette.person.person.view.all` OR
+           * user has permission `annette.person.person.maintain.all` OR
+           * user has permission `annette.person.person.maintain.subordinate` and assigned as chief of unit person assigned to OR
+           * user has permission `annette.person.person.maintain.orgUnit` for unit person assigned to
+      parameters:
+        - name: id
+          in: path
+          description: person id
+          schema:
+            type: string
+          required: true
+          example: 'P0001'
+        - name: withAttributes
+          in: query
+          description: list of attributes separated by comma or `all` to get all attributes
+          schema:
+            type: string
+          required: false
+          example: 'all'
+        - name: fromReadSide
+          in: path
+          description: indicator to get data from read side
+          schema:
+            type: boolean
+          required: true
+          example: true
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: P0001
+                  lastname: Fisher
+                  firstname: Kristina
+                  categoryId: PERSON
+                  phone: "(754)-566-6120"
+                  email: kristina.fisher@example.com
+                  source: SAP
+                  externalId: SAP-P0001
+                  attributes:
+                    salary: '110000'
+                    birthDate: '1977-03-30'
+                    isMarried: 'true'
+                    gender: F
+                  updatedAt: "2022-06-16T12:02:05.716892Z"
+                  updatedBy:
+                    principalType: "person"
+                    principalId: "P0001"
+        '404':
+          description: Person not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.personService.person.notFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/person/getPersonsById/{fromReadSide}:
+    post:
+      tags:
+        - Person
+      summary: Get persons by ids
+      description: |
+        Get persons by ids provided in request body
+        
+        If fromReadSide == false 
+        * reads data from write side of CQRS data model and returns most recent person record
+        * user has permission `annette.person.person.maintain.all`
+        
+        otherwise 
+        * it gets data from read side (usually it is faster than get data from write side) 
+        * user has permission `annette.person.person.maintain.all` or `annette.person.person.view.all`
+      parameters:
+        - name: withAttributes
+          in: query
+          description: list of attributes separated by comma or `all` to get all attributes
+          schema:
+            type: string
+          required: false
+          example: 'all'
+        - name: fromReadSide
+          in: path
+          description: indicator to get data from read side
+          schema:
+            type: boolean
+          required: true
+          example: true
+      requestBody:
+        description: person ids
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+              example: [ 'P0001', 'P0002']
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                example:
+                  - id: P0001
+                    lastname: Fisher
+                    firstname: Kristina
+                    categoryId: PERSON
+                    phone: "(754)-566-6120"
+                    email: kristina.fisher@example.com
+                    source: SAP
+                    externalId: SAP-P0001
+                    attributes:
+                      salary: '110000'
+                      birthDate: '1977-03-30'
+                      isMarried: 'true'
+                      gender: F
+                    updatedAt: "2022-06-16T12:02:05.716892Z"
+                    updatedBy:
+                      principalType: "person"
+                      principalId: "P0001"
+                  - id: P0002
+                    lastname: Martin
+                    firstname: Leah
+                    categoryId: PERSON
+                    phone: "(257)-953-6866"
+                    email: leah.martin@example.com
+                    source: SAP
+                    externalId: SAP-P0002
+                    attributes:
+                    updatedAt: '2022-03-20T18:51:14.097684Z'
+                    updatedBy:
+                      principalType: person
+                      principalId: P0001
+  /api/annette/v1/person/findPersons:
+    post:
+      tags:
+        - Person
+      summary: Find persons
+      description: |
+        Find persons using query provided in request body. Requires permission `annette.person.person.maintain.all` or `annette.person.person.view.all`.
+      requestBody:
+        description: person query
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                offset: 0
+                size: 10
+                filter: "kristina"
+                lastname: ""
+                firstname: ""
+                middlename: ""
+                phone: ""
+                email: ""
+                categories:
+                  - "PERSON"
+                  - "CONTACT"
+                sources:
+                  - "SAP"
+                externalIds:
+                query:
+                sortBy:
+                  - field: name
+                    descending: false
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  total: 1
+                  hits:
+                    - id: P-0001
+                      score: 1.2039728164672852
+                      updatedAt: "2021-12-16T08:56:34.932113Z"
+  /api/annette/v1/person/getPersonMetadata:
+    get:
+      tags:
+        - Person
+      summary: Get person metadata
+      description: |
+        Get person metadata that describes attributes. Requires permission `annette.person.person.view.all` or `annette.person.person.maintain.all`.
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  salary:
+                    name: salary
+                    caption:
+                      text: Salary
+                      type: text
+                    index: salary
+                    readSidePersistence: false
+                    type: decimal
+                  birthDate:
+                    name: birthDate
+                    caption:
+                      text: Birth Date
+                      type: text
+                    index: birthDate
+                    readSidePersistence: false
+                    type: local-date
+                  education:
+                    name: education
+                    subtype: education
+                    caption:
+                      text: Education
+                      type: text
+                    readSidePersistence: true
+                    type: json
+                  isMarried:
+                    name: isMarried
+                    caption:
+                      text: Is Married
+                      type: text
+                    index: isMarried
+                    readSidePersistence: false
+                    type: boolean
+                  gender:
+                    name: gender
+                    subtype: gender
+                    allowedValues:
+                      - M
+                      - F
+                    caption:
+                      text: Gender
+                      type: text
+                    index: gender
+                    readSidePersistence: false
+                    type: string
+
+  /api/annette/v1/person/getPersonAttributes/{id}/{fromReadSide}:
+    get:
+      tags:
+        - Person
+      summary: Get person attributes by person id
+      description: |
+        Get person attributes by person id
+        
+        If fromReadSide == false 
+         * reads data from write side of CQRS data model and returns most recent person record
+         * endpoint authorized if:
+           * user has permission `annette.person.person.maintain.all` OR
+           * user has permission `annette.person.person.maintain.subordinate` and assigned as chief of unit person assigned to OR
+           * user has permission `annette.person.person.maintain.orgUnit` for unit person assigned to
+        
+        otherwise 
+         * it gets data from read side (usually it is faster than get data from write side) 
+         * endpoint authorized if:
+           * user has permission `annette.person.person.view.all` OR
+           * user has permission `annette.person.person.maintain.all` OR
+           * user has permission `annette.person.person.maintain.subordinate` and assigned as chief of unit person assigned to OR
+           * user has permission `annette.person.person.maintain.orgUnit` for unit person assigned to
+      parameters:
+        - name: id
+          in: path
+          description: person id
+          schema:
+            type: string
+          required: true
+          example: 'P0001'
+        - name: withAttributes
+          in: query
+          description: list of attributes separated by comma or `all` to get all attributes
+          schema:
+            type: string
+          required: false
+          example: 'all'
+        - name: fromReadSide
+          in: path
+          description: indicator to get data from read side
+          schema:
+            type: boolean
+          required: true
+          example: true
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  salary: '110000'
+                  birthDate: '1977-03-30'
+                  isMarried: 'true'
+                  gender: F
+        '404':
+          description: Person not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.personService.person.notFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/person/getPersonsAttributes/{fromReadSide}:
+    post:
+      tags:
+        - Person
+      summary: Get persons attributes by ids
+      description: |
+        Get persons attributes by ids provided in request body
+        
+        If fromReadSide == false 
+        * reads data from write side of CQRS data model and returns most recent person record
+        * user has permission `annette.person.person.maintain.all`
+        
+        otherwise 
+        * it gets data from read side (usually it is faster than get data from write side) 
+        * user has permission `annette.person.person.maintain.all` or `annette.person.person.view.all`
+      parameters:
+        - name: withAttributes
+          in: query
+          description: list of attributes separated by comma or `all` to get all attributes
+          schema:
+            type: string
+          required: false
+          example: 'all'
+        - name: fromReadSide
+          in: path
+          description: indicator to get data from read side
+          schema:
+            type: boolean
+          required: true
+          example: true
+      requestBody:
+        description: person ids
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+              example: [ 'P0001', 'P0002']
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  P0001:
+                    salary: '110000'
+                    birthDate: '1977-03-30'
+                    isMarried: 'true'
+                    gender: F
+                  P0002:
+                    salary: '100000'
+                    birthDate: '1985-02-12'
+                    isMarried: 'true'
+                    gender: M
+
+  /api/annette/v1/person/profile:
+    get:
+      tags:
+        - Person
+      summary: Get person profile
+      description: |
+        Get person profile.
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: P0001
+                  lastname: Fisher
+                  firstname: Kristina
+                  categoryId: PERSON
+                  phone: "(754)-566-6120"
+                  email: kristina.fisher@example.com
+                  source: SAP
+                  externalId: SAP-P0001
+                  attributes:
+                  updatedAt: "2022-06-16T12:02:05.716892Z"
+                  updatedBy:
+                    principalType: "person"
+                    principalId: "P0001"
+        '404':
+          description: Person not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.personService.person.notFound"
+                  errorCode: 404
+                  params: { }
+
+
+  /api/annette/v1/person/createCategory:
+    post:
+      tags:
+        - Person category
+      summary: Create category
+      description: Create category. Required permission `annette.person.category.maintain.all`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: PERSON
+                name: Person
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: PERSON
+                  name: Person
+                  updatedAt: '2022-03-20T18:51:10.670898Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
+        '400':
+          description: Category already exist
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.core.category.alreadyExist"
+                  errorCode: 400
+                  params: { }
+  /api/annette/v1/person/updateCategory:
+    post:
+      tags:
+        - Person category
+      summary: Update category
+      description: Update category. Required permission `annette.person.category.maintain.all`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: PERSON
+                name: Person
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: PERSON
+                  name: Person
+                  updatedAt: '2022-03-20T18:51:10.670898Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.core.category.notFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/person/deleteCategory:
+    post:
+      tags:
+        - Person category
+      summary: Delete category
+      description: Delete category. Required permission `annette.person.category.maintain.all`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: "PERSON"
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.core.category.notFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/person/getCategoryById/{id}/{fromReadSide}:
+    get:
+      tags:
+        - Person category
+      summary: Get category by id
+      description: |
+        Get category by id. 
+        
+        If fromReadSide == false:
+        * it reads data from write side of CQRS data model and returns most recent category records
+        * requires permission `annette.person.category.maintain.all`
+        
+        otherwise 
+        * it gets data from read side (usually it is faster than get data from write side)
+        * requires permission `annette.person.category.maintain.all` or `annette.person.category.view.all`
+      parameters:
+        - name: id
+          in: path
+          description: category id
+          schema:
+            type: string
+          required: true
+          example: "PERSON"
+        - name: fromReadSide
+          in: path
+          description: indicator to get data from read side
+          schema:
+            type: boolean
+          required: true
+          example: true
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: PERSON
+                  name: Person
+                  updatedAt: '2022-03-20T18:51:10.670898Z'
+                  updatedBy:
+                    principalType: person
+                    principalId: P0001
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.core.category.notFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/person/getCategoriesById/{fromReadSide}:
+    post:
+      tags:
+        - Person category
+      summary: Get categories by ids
+      description: |
+        Get categories by ids provided in request body.
+        
+        If fromReadSide == false:
+        * it reads data from write side of CQRS data model and returns most recent category records
+        * requires permission `annette.person.category.maintain.all`
+        
+        otherwise 
+        * it gets data from read side (usually it is faster than get data from write side)
+        * requires permission `annette.person.category.maintain.all` or `annette.person.category.view.all`
+      parameters:
+        - name: fromReadSide
+          in: path
+          description: indicator to get data from read side
+          schema:
+            type: boolean
+          required: true
+          example: true
+      requestBody:
+        description: category ids
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+              example: [ "PERSON", "CONTACT"]
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                example:
+                  - id: PERSON
+                    name: Person
+                    updatedAt: '2022-03-20T18:51:10.670898Z'
+                    updatedBy:
+                      principalType: person
+                      principalId: P0001
+                  - id: CONTACT
+                    name: Contact
+                    updatedAt: '2022-03-20T18:51:10.670898Z'
+                    updatedBy:
+                      principalType: person
+                      principalId: P0001
+  /api/annette/v1/person/findCategories:
+    post:
+      tags:
+        - Person category
+      summary: Find categories
+      description: |
+        Find categories using query provided in request body. 
+        Requires permission `annette.person.category.maintain.all` or `annette.person.category.view.all`
+      requestBody:
+        description: category query
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                offset: 0
+                size: 10
+                filter: person
+                sortBy:
+                  - field: name
+                    descending: false
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  total: 1
+                  hits:
+                    - id: "PERSON"
+                      score: 1.2039728164672852
+                      updatedAt: "2021-12-16T08:56:34.932113Z"

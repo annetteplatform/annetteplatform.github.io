@@ -1,0 +1,568 @@
+openapi: 3.0.0
+info:
+  description: >
+    Authorization API provides endpoints for the following areas:
+    
+    * Authorization Roles
+    
+    * Permission Assignments
+
+  version: "0.5.0"
+  title: Authorization API
+
+servers:
+  - url: http://localhost:9000
+    description: Localhost
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Authorization Roles
+    description: provides CRUD operations for authorization Roles
+  - name: Permission Assignments
+    description: provides search operation for permission assignments
+
+
+paths:
+  /api/annette/v1/authorization/createRole:
+    post:
+      tags:
+        - Authorization Roles
+      summary: Create authorization role
+      description: Create authorization role. Required permission `annette.authorization.role.maintain`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: "admin-role"
+                name: "Admin role"
+                description: "Role contains super user permissions and therefore should be assigned to administrator users only"
+                permissions:
+                  - id: "annette.authorization.role.maintain"
+                    arg1: ""
+                    arg2: ""
+                    arg3: ""
+                  - id: "annette.application.translation.maintain.all"
+                    arg1: ""
+                    arg2: ""
+                    arg3: ""
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: "admin-role"
+                  name: "Admin role"
+                  description: "Role contains super user permissions and therefore should be assigned to administrator users only"
+                  permissions:
+                    - id: "annette.authorization.role.maintain"
+                      arg1: ""
+                      arg2: ""
+                      arg3: ""
+                    - id: "annette.application.translation.maintain.all"
+                      arg1: ""
+                      arg2: ""
+                      arg3: ""
+                  updatedAt: "2022-06-16T12:02:05.716892Z"
+                  updatedBy:
+                    principalType: "person"
+                    principalId: "P0001"
+        '400':
+          description: Authorization role already exist
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.authorizationService.role.roleAlreadyExist"
+                  errorCode: 400
+                  params: { }
+  /api/annette/v1/authorization/updateRole:
+    post:
+      tags:
+        - Authorization Roles
+      summary: Update authorization role
+      description: Update authorization role. Required permission `annette.authorization.role.maintain`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: "admin-role"
+                name: "Admin role"
+                description: "Role contains super user permissions and therefore should be assigned to administrator users only"
+                permissions:
+                  - id: "annette.authorization.role.maintain"
+                    arg1: ""
+                    arg2: ""
+                    arg3: ""
+                  - id: "annette.application.translation.maintain.all"
+                    arg1: ""
+                    arg2: ""
+                    arg3: ""
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: "admin-role"
+                  name: "Admin role"
+                  description: "Role contains super user permissions and therefore should be assigned to administrator users only"
+                  permissions:
+                    - id: "annette.authorization.role.maintain"
+                      arg1: ""
+                      arg2: ""
+                      arg3: ""
+                    - id: "annette.application.translation.maintain.all"
+                      arg1: ""
+                      arg2: ""
+                      arg3: ""
+                  updatedAt: "2022-06-16T12:02:05.716892Z"
+                  updatedBy:
+                    principalType: "person"
+                    principalId: "P0001"
+        '404':
+          description: Authorization role not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.authorizationService.role.roleNotFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/authorization/deleteRole:
+    post:
+      tags:
+        - Authorization Roles
+      summary: Delete authorization role
+      description: Delete authorization role. Required permission `annette.authorization.role.maintain`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id: "admin-role"
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+        '404':
+          description: Authorization role not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.authorizationService.role.roleNotFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/authorization/getRoleById/{id}/{fromReadSide}:
+    get:
+      tags:
+        - Authorization Roles
+      summary: Get authorization role by id
+      description: | 
+       Get authorization role by id.
+        
+       If fromReadSide == false 
+        * reads data from write side of CQRS data model and returns most recent authorization role record
+        * requires permission `annette.authorization.role.maintain` to get data
+        
+       otherwise 
+        * it gets data from read side (usually it is faster than get data from write side) 
+        * requires permission `annette.authorization.role.view`
+      parameters:
+        - name: id
+          in: path
+          description: authorization role id
+          schema:
+            type: string
+          required: true
+          example: 'admin-role'
+        - name: fromReadSide
+          in: path
+          description: indicator to get data from read side
+          schema:
+            type: boolean
+          required: true
+          example: true
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: "admin-role"
+                  name: "Admin role"
+                  description: "Role contains super user permissions and therefore should be assigned to administrator users only"
+                  permissions:
+                    - id: "annette.authorization.role.maintain"
+                      arg1: ""
+                      arg2: ""
+                      arg3: ""
+                    - id: "annette.application.translation.maintain.all"
+                      arg1: ""
+                      arg2: ""
+                      arg3: ""
+                  updatedAt: "2022-06-16T12:02:05.716892Z"
+                  updatedBy:
+                    principalType: "person"
+                    principalId: "P0001"
+        '404':
+          description: Authorization role not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.authorizationService.role.roleNotFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/authorization/getRolesById/{fromReadSide}:
+    post:
+      tags:
+        - Authorization Roles
+      summary: Get authorization roles by ids
+      description: |
+        Get authorization roles by ids provided in request body
+        
+        If fromReadSide == false 
+         * reads data from write side of CQRS data model and returns most recent authorization role records
+         * requires permission `annette.authorization.role.maintain` to get data
+        
+        otherwise 
+         * it gets data from read side (usually it is faster than get data from write side) 
+         * requires permission `annette.authorization.role.view`
+      parameters:
+        - name: body
+          in: body
+          description: authorization role ids
+          schema:
+            type: array
+          required: true
+        - name: fromReadSide
+          in: path
+          description: indicator to get data from read side
+          schema:
+            type: boolean
+          required: true
+          example: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              example: [ 'admin-role', 'cms-view-role']
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                example:
+                  - id: "admin-role"
+                    name: "Admin role"
+                    description: "Role contains super user permissions and therefore should be assigned to administrator users only"
+                    permissions:
+                      - id: "annette.authorization.role.maintain"
+                        arg1: ""
+                        arg2: ""
+                        arg3: ""
+                      - id: "annette.application.translation.maintain.all"
+                        arg1: ""
+                        arg2: ""
+                        arg3: ""
+                    updatedAt: "2022-06-16T12:02:05.716892Z"
+                    updatedBy:
+                      principalType: "person"
+                      principalId: "P0001"
+                  - id: "cms-view-role"
+                    name: "CMS View"
+                    description: ""
+                    permissions:
+                      - id: "annette.cms.blog.view"
+                        arg1: ""
+                        arg2: ""
+                        arg3: ""
+                      - id: "annette.cms.space.view"
+                        arg1: ""
+                        arg2: ""
+                        arg3: ""
+                    updatedAt: "2022-06-16T12:02:05.716892Z"
+                    updatedBy:
+                      principalType: "person"
+                      principalId: "P0001"
+  /api/annette/v1/authorization/findRoles:
+    post:
+      tags:
+        - Authorization Roles
+      summary: Find authorization roles
+      description: |
+        Find authorization roles using query provided in request body. 
+        Requires permission `annette.authorization.role.maintain` or `annette.authorization.role.view`.
+      parameters:
+        - name: body
+          in: body
+          description: authorization role query
+          schema:
+            type: object
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                offset: 0
+                size: 10
+                filter: admin
+                sortBy:
+                  - field: name
+                    descending: false
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  total: 1
+                  hits:
+                   - id: admin-role
+                     score: 1.2039728164672852
+                     updatedAt: "2021-12-16T08:56:34.932113Z"
+
+  /api/annette/v1/authorization/assignPrincipal:
+    post:
+      tags:
+        - Authorization Roles
+      summary: Assign principal to authorization role
+      description: |
+        Assign principal to authorization role. Required permission `annette.authorization.role.maintainPrincipals`.
+        The following principal could be assigned to authorization role:
+        
+        * person - person with specified person id
+        * org-position - persons that assigned to specifies organizational position
+        * org-role - persons that assigned to specifies organizational role
+        * unit-chief - person that assigned as chief of specifies organizational unit
+        * direct-unit - persons that directly assigned to specifies organizational unit
+        * descendant-unit - persons that assigned to specifies organizational unit or it subunit
+        * authenticated - any authenticated user
+        * anonymous - non-authenticated user
+        * tech - technical account
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                roleId: admin-role
+                principal:
+                  principalType: "person"
+                  principalId: "P0001"
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+        '404':
+          description: Authorization role not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.authorizationService.role.roleNotFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/authorization/unassignPrincipal:
+    post:
+      tags:
+        - Authorization Roles
+      summary: Unassign principal from authorization role
+      description: |
+        Unassign principal from authorization role. Required permission `annette.authorization.role.maintainPrincipals`.
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                roleId: admin-role
+                principal:
+                  principalType: "person"
+                  principalId: "P0001"
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+        '404':
+          description: Authorization role not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.authorizationService.role.roleNotFound"
+                  errorCode: 404
+                  params: { }
+  /api/annette/v1/authorization/getRolePrincipals/{id}/{fromReadSide}:
+    get:
+      tags:
+        - Authorization Roles
+      summary: Get principals assigned to role
+      description: |
+        Get principals assigned to role.
+        
+        If fromReadSide == false 
+         * reads data from write side of CQRS data model and returns most recent authorization role record
+         * requires permission `annette.authorization.role.maintainPrincipals` to get data
+        
+        otherwise 
+         * it gets data from read side (usually it is faster than get data from write side) 
+         * requires permission `annette.authorization.role.viewPrincipals`
+      parameters:
+        - name: id
+          in: path
+          description: authorization role id
+          schema:
+            type: string
+          required: true
+          example: 'admin-role'
+        - name: fromReadSide
+          in: path
+          description: indicator to get data from read side
+          schema:
+            type: boolean
+          required: true
+          example: true
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                example:
+                  - principalType: "person"
+                    principalId: "P0001"
+                  - principalType: "person"
+                    principalId: "P0002"
+                  - principalType: "person"
+                    principalId: "P0003"
+        '404':
+          description: Authorization role not found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: "annette.authorizationService.role.roleNotFound"
+                  errorCode: 404
+                  params: { }
+
+  /api/annette/v1/authorization/findAssignments:
+    post:
+      tags:
+        - Permission Assignments
+      summary: Find permission assignments
+      description: |
+        Find permission assignments using query provided in request body. 
+        Requires permission `annette.authorization.assignments.view`.
+      parameters:
+        - name: body
+          in: body
+          description: authorization role query
+          schema:
+            type: object
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                offset: 0
+                size: 10
+                permission:
+                  id: "annette.authorization.role.maintain"
+                  arg1: ""
+                  arg2: ""
+                  arg3: ""
+                principal:
+                  principalType: "person"
+                  principalId: "P0001"
+                source:
+                  sourceId: ""
+                  sourceType: ""
+                sortBy:
+                  - field: name
+                    descending: false
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  total: 1
+                  hits:
+                    - id: person~P0001+annette.authorization.role.maintain~~~+role~admin-role
+                      score: 4.696136951446533
+                      assignment:
+                        principal:
+                          principalType: person
+                          principalId: P0001
+                        permission:
+                          id: annette.authorization.role.maintain
+                          arg1: ''
+                          arg2: ''
+                          arg3: ''
+                        source:
+                          sourceType: role
+                          sourceId: admin-role
+                        updatedBy:
+                          principalType: person
+                          principalId: P0001
+                        updatedAt: '2022-03-20T18:52:06.99454Z'
